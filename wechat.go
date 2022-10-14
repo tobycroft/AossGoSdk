@@ -182,10 +182,7 @@ type wechatWxaGenerateSchemeRet struct {
 }
 
 type WechatWxaGenerateScheme struct {
-	PhoneNumber     string      `json:"phoneNumber"`
-	PurePhoneNumber string      `json:"purePhoneNumber"`
-	CountryCode     string      `json:"countryCode"`
-	Watermark       interface{} `json:"watermark"`
+	Openlink string
 }
 
 func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expire_interval int) (WechatWxaGenerateScheme, error) {
