@@ -1,4 +1,4 @@
-package Aoss
+package AossGoSdk
 
 const unlimited_file = "/v1/wechat/wxa/unlimited_file"
 const unlimited_base64 = "/v1/wechat/wxa/unlimited_base64"

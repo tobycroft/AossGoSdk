@@ -1,4 +1,4 @@
-package Aoss
+package AossGoSdk
 
 import (
 	"errors"
