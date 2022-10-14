@@ -102,7 +102,7 @@ func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
 	}
 }
 
-type WechatSnsJscode2sessionRet struct {
+type wechatSnsJscode2sessionRet struct {
 	Data WechatSnsJscode2session
 }
 
@@ -128,7 +128,7 @@ func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session
 		return WechatSnsJscode2session{}, errors.New(ret)
 	}
 	if resp.Code == 0 {
-		var dat WechatSnsJscode2sessionRet
+		var dat wechatSnsJscode2sessionRet
 		err = jsoniter.UnmarshalFromString(ret, &dat)
 		if err != nil {
 			return WechatSnsJscode2session{}, errors.New(ret)
@@ -139,7 +139,7 @@ func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session
 	}
 }
 
-type WechatWxaGEtUserPhoneNumberRet struct {
+type wechatWxaGEtUserPhoneNumberRet struct {
 	Data WechatWxaGEtUserPhoneNumber
 }
 
@@ -166,7 +166,7 @@ func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneN
 		return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
 	}
 	if resp.Code == 0 {
-		var dat WechatWxaGEtUserPhoneNumberRet
+		var dat wechatWxaGEtUserPhoneNumberRet
 		err = jsoniter.UnmarshalFromString(ret, &dat)
 		if err != nil {
 			return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
@@ -177,7 +177,7 @@ func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneN
 	}
 }
 
-type WechatWxaGenerateSchemeRet struct {
+type wechatWxaGenerateSchemeRet struct {
 	Data WechatWxaGenerateScheme
 }
 
@@ -188,7 +188,7 @@ type WechatWxaGenerateScheme struct {
 	Watermark       interface{} `json:"watermark"`
 }
 
-func Wechat_wxa_generatescheme(project, code string) (WechatWxaGenerateScheme, error) {
+func Wechat_wxa_generateScheme(project, code string) (WechatWxaGenerateScheme, error) {
 	post := map[string]any{
 		"code": code,
 	}
@@ -204,7 +204,7 @@ func Wechat_wxa_generatescheme(project, code string) (WechatWxaGenerateScheme, e
 		return WechatWxaGenerateScheme{}, errors.New(ret)
 	}
 	if resp.Code == 0 {
-		var dat WechatWxaGenerateSchemeRet
+		var dat wechatWxaGenerateSchemeRet
 		err = jsoniter.UnmarshalFromString(ret, &dat)
 		if err != nil {
 			return WechatWxaGenerateScheme{}, errors.New(ret)
