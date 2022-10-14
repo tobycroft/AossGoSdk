@@ -91,19 +91,19 @@ func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
 		return WechatWxaScene{}, errors.New(ret)
 	}
 	if resp.Code == 0 {
-		var dat WechatWxaScene
+		var dat wechatWxaRet
 		err = jsoniter.UnmarshalFromString(ret, &dat)
 		if err != nil {
 			return WechatWxaScene{}, errors.New(ret)
 		}
-		return dat, nil
+		return dat.Data, nil
 	} else {
 		return WechatWxaScene{}, errors.New(resp.Echo)
 	}
 }
 
 type WechatSnsJscode2sessionRet struct {
-	Data map[string]interface{}
+	Data WechatSnsJscode2session
 }
 
 type WechatSnsJscode2session struct {
@@ -128,13 +128,51 @@ func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session
 		return WechatSnsJscode2session{}, errors.New(ret)
 	}
 	if resp.Code == 0 {
-		var dat WechatSnsJscode2session
+		var dat WechatSnsJscode2sessionRet
 		err = jsoniter.UnmarshalFromString(ret, &dat)
 		if err != nil {
 			return WechatSnsJscode2session{}, errors.New(ret)
 		}
-		return dat, nil
+		return dat.Data, nil
 	} else {
 		return WechatSnsJscode2session{}, errors.New(resp.Echo)
+	}
+}
+
+type WechatWxaGEtUserPhoneNumberRet struct {
+	Data WechatWxaGEtUserPhoneNumber
+}
+
+type WechatWxaGEtUserPhoneNumber struct {
+	PhoneNumber     string      `json:"phoneNumber"`
+	PurePhoneNumber string      `json:"purePhoneNumber"`
+	CountryCode     string      `json:"countryCode"`
+	watermark       interface{} `json:"watermark"`
+}
+
+func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneNumber, error) {
+	post := map[string]any{
+		"code": code,
+	}
+	ret, err := Net.Post(baseUrl+getuserphonenumber, map[string]interface{}{
+		"token": project,
+	}, post, nil, nil)
+	if err != nil {
+		return WechatWxaGEtUserPhoneNumber{}, err
+	}
+	var resp wechatRet
+	err = jsoniter.UnmarshalFromString(ret, &resp)
+	if err != nil {
+		return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
+	}
+	if resp.Code == 0 {
+		var dat WechatWxaGEtUserPhoneNumberRet
+		err = jsoniter.UnmarshalFromString(ret, &dat)
+		if err != nil {
+			return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
+		}
+		return dat.Data, nil
+	} else {
+		return WechatWxaGEtUserPhoneNumber{}, errors.New(resp.Echo)
 	}
 }
