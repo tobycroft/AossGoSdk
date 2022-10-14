@@ -22,7 +22,7 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 		"data": data,
 		"page": page,
 	}
-	ret, err := Net.Post("http://upload.tuuz.cc:81/v1/wechat/wxa/unlimited_file", map[string]interface{}{
+	ret, err := Net.Post(baseUrl+unlimited_file, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
@@ -45,7 +45,7 @@ func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
 		"data": data,
 		"page": page,
 	}
-	ret, err := Net.Post("http://upload.tuuz.cc:81/v1/wechat/wxa/unlimited_base64", map[string]interface{}{
+	ret, err := Net.Post(baseUrl+unlimited_base64, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
@@ -79,7 +79,7 @@ func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
 	post := map[string]any{
 		"scene": scene,
 	}
-	ret, err := Net.Post("http://upload.tuuz.cc:81/v1/wechat/wxa/scene", map[string]interface{}{
+	ret, err := Net.Post(baseUrl+wxa_scene, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
@@ -116,7 +116,7 @@ func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session
 	post := map[string]any{
 		"js_code": js_code,
 	}
-	ret, err := Net.Post("http://upload.tuuz.cc:81/v1/wechat/sns/jscode", map[string]interface{}{
+	ret, err := Net.Post(baseUrl+jscode, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
