@@ -188,7 +188,7 @@ type WechatWxaGenerateScheme struct {
 	Watermark       interface{} `json:"watermark"`
 }
 
-func Wechat_wxa_generatescheme(project, path, query, is_expire, expire_interval string) (WechatWxaGenerateScheme, error) {
+func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expire_interval int) (WechatWxaGenerateScheme, error) {
 	post := map[string]any{
 		"path":            path,
 		"query":           query,
