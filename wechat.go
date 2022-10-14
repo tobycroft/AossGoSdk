@@ -188,7 +188,7 @@ type WechatWxaGenerateScheme struct {
 	Watermark       interface{} `json:"watermark"`
 }
 
-func Wechat_wxa_generateScheme(project, code string) (WechatWxaGenerateScheme, error) {
+func Wechat_wxa_generatescheme(project, code string) (WechatWxaGenerateScheme, error) {
 	post := map[string]any{
 		"code": code,
 	}
