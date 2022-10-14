@@ -147,7 +147,7 @@ type WechatWxaGEtUserPhoneNumber struct {
 	PhoneNumber     string      `json:"phoneNumber"`
 	PurePhoneNumber string      `json:"purePhoneNumber"`
 	CountryCode     string      `json:"countryCode"`
-	watermark       interface{} `json:"watermark"`
+	Watermark       interface{} `json:"watermark"`
 }
 
 func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneNumber, error) {
