@@ -188,11 +188,14 @@ type WechatWxaGenerateScheme struct {
 	Watermark       interface{} `json:"watermark"`
 }
 
-func Wechat_wxa_generatescheme(project, code string) (WechatWxaGenerateScheme, error) {
+func Wechat_wxa_generatescheme(project, path, query, is_expire, expire_interval string) (WechatWxaGenerateScheme, error) {
 	post := map[string]any{
-		"code": code,
+		"path":            path,
+		"query":           query,
+		"is_expire":       is_expire,
+		"expire_interval": expire_interval,
 	}
-	ret, err := Net.Post(baseUrl+getuserphonenumber, map[string]interface{}{
+	ret, err := Net.Post(baseUrl+generatescheme, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
