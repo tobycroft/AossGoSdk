@@ -176,3 +176,41 @@ func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneN
 		return WechatWxaGEtUserPhoneNumber{}, errors.New(resp.Echo)
 	}
 }
+
+type WechatWxaGenerateSchemeRet struct {
+	Data WechatWxaGenerateScheme
+}
+
+type WechatWxaGenerateScheme struct {
+	PhoneNumber     string      `json:"phoneNumber"`
+	PurePhoneNumber string      `json:"purePhoneNumber"`
+	CountryCode     string      `json:"countryCode"`
+	Watermark       interface{} `json:"watermark"`
+}
+
+func Wechat_wxa_generatescheme(project, code string) (WechatWxaGenerateScheme, error) {
+	post := map[string]any{
+		"code": code,
+	}
+	ret, err := Net.Post(baseUrl+getuserphonenumber, map[string]interface{}{
+		"token": project,
+	}, post, nil, nil)
+	if err != nil {
+		return WechatWxaGenerateScheme{}, err
+	}
+	var resp wechatRet
+	err = jsoniter.UnmarshalFromString(ret, &resp)
+	if err != nil {
+		return WechatWxaGenerateScheme{}, errors.New(ret)
+	}
+	if resp.Code == 0 {
+		var dat WechatWxaGenerateSchemeRet
+		err = jsoniter.UnmarshalFromString(ret, &dat)
+		if err != nil {
+			return WechatWxaGenerateScheme{}, errors.New(ret)
+		}
+		return dat.Data, nil
+	} else {
+		return WechatWxaGenerateScheme{}, errors.New(resp.Echo)
+	}
+}
