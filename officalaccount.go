@@ -6,22 +6,7 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
-type wechatRet struct {
-	Code int64
-	Echo string
-}
-
-type wechatStringData struct {
-	Code int64
-	Data string
-	Echo string
-}
-
-func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
-	post := map[string]any{
-		"data": data,
-		"page": page,
-	}
+func Wechat_offi_get_user_list(project string) (string, error) {
 	ret, err := Net.Post(baseUrl+unlimited_file, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
