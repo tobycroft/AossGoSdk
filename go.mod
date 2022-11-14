@@ -1,6 +1,6 @@
 module github.com/tobycroft/AossGoSdk
 
-go 1.19
+go 1.18
 
 require (
 	github.com/json-iterator/go v1.1.12
