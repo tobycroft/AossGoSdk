@@ -2,6 +2,7 @@ package AossGoSdk
 
 import (
 	"errors"
+	"fmt"
 	jsoniter "github.com/json-iterator/go"
 	Net "github.com/tobycroft/TuuzNet"
 )
@@ -19,17 +20,18 @@ func Wechat_get_accessToken(project string) error {
 		return errors.New(ret)
 	}
 	if resp.Code == 0 {
+		fmt.Println(resp)
 		var dat wechatDataMapStringInterface
 		err = jsoniter.UnmarshalFromString(ret, &dat)
 		if err != nil {
 			return errors.New(ret)
 		}
-		addr := "https://api.weixin.qq.com/cgi-bin/token"
-		postData := dat.Data
-		ret, err = Net.PostRaw(addr, postData)
+		postData := dat.Data["postdata"]
+		ret, err = Net.PostRaw(dat.Data["address"].(string), postData)
 		if err != nil {
 			return err
 		}
+		fmt.Println(ret)
 		ret, err = Net.Post(baseUrl+set_accesstoken, map[string]interface{}{
 			"token": project,
 		}, map[string]interface{}{
