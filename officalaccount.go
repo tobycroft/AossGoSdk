@@ -44,6 +44,7 @@ func Wechat_get_accessToken(project string) error {
 		if err != nil {
 			return errors.New(ret)
 		}
+		return nil
 	} else {
 		return errors.New(resp.Echo)
 	}
