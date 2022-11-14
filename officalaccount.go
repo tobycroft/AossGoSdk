@@ -40,12 +40,16 @@ func Wechat_get_accessToken(project string) error {
 		if err != nil {
 			return err
 		}
-		var resp wechatRet
-		err = jsoniter.UnmarshalFromString(ret, &resp)
+		var resp2 wechatRet
+		err = jsoniter.UnmarshalFromString(ret, &resp2)
 		if err != nil {
 			return errors.New(ret)
 		}
-		return nil
+		if resp2.Code == 0 {
+			return nil
+		} else {
+			return errors.New(resp.Echo)
+		}
 	} else {
 		return errors.New(resp.Echo)
 	}
