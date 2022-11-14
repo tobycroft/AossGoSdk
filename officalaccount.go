@@ -88,14 +88,19 @@ func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state st
 	if err != nil {
 		return "", err
 	}
-	var wwuf wechatStringData
-	err = jsoniter.UnmarshalFromString(ret, &wwuf)
+	var resp wechatRet
+	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
-		return "", err
+		return "", errors.New(ret)
 	}
-	if wwuf.Code == 0 {
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
 		return wwuf.Data, nil
 	} else {
-		return "", errors.New(wwuf.Echo)
+		return "", errors.New(resp.Echo)
 	}
 }
