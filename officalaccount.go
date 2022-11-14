@@ -6,8 +6,55 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
+func Wechat_get_accessToken(project string) error {
+	ret, err := Net.Post(baseUrl+get_accesstoken, map[string]interface{}{
+		"token": project,
+	}, nil, nil, nil)
+	if err != nil {
+		return err
+	}
+	var resp wechatRet
+	err = jsoniter.UnmarshalFromString(ret, &resp)
+	if err != nil {
+		return errors.New(ret)
+	}
+	if resp.Code == 0 {
+		var dat wechatDataMapStringInterface
+		err = jsoniter.UnmarshalFromString(ret, &dat)
+		if err != nil {
+			return errors.New(ret)
+		}
+
+		addr := "https://api.weixin.qq.com/cgi-bin/token"
+		postData := dat.Data
+		ret, err = Net.PostRaw(addr, postData)
+		if err != nil {
+			return err
+		}
+		ret, err = Net.Post(baseUrl+set_accesstoken, map[string]interface{}{
+			"token": project,
+		}, map[string]interface{}{
+			"ret": ret,
+		}, nil, nil)
+		if err != nil {
+			return err
+		}
+		var resp wechatRet
+		err = jsoniter.UnmarshalFromString(ret, &resp)
+		if err != nil {
+			return errors.New(ret)
+		}
+	} else {
+		return errors.New(resp.Echo)
+	}
+}
+
 type wechatDataSlices struct {
 	Data []string
+}
+
+type wechatDataMapStringInterface struct {
+	Data map[string]interface{}
 }
 
 func Wechat_offi_get_user_list(project string) ([]string, error) {
