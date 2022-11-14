@@ -24,8 +24,8 @@ func Wechat_get_accessToken(project string) error {
 		if err != nil {
 			return errors.New(ret)
 		}
-		postData := dat.Data["postdata"]
-		ret, err = Net.PostRaw(dat.Data["address"].(string), postData)
+		postData := dat.Data["postdata"].(map[string]interface{})
+		ret, err = Net.Post(dat.Data["address"].(string), nil, postData, nil, nil)
 		if err != nil {
 			return err
 		}
