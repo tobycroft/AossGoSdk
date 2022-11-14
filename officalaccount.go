@@ -24,7 +24,6 @@ func Wechat_get_accessToken(project string) error {
 		if err != nil {
 			return errors.New(ret)
 		}
-
 		addr := "https://api.weixin.qq.com/cgi-bin/token"
 		postData := dat.Data
 		ret, err = Net.PostRaw(addr, postData)
