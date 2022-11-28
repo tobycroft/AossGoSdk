@@ -124,13 +124,13 @@ func Wechat_offi_get_user_info(project, openid string) (WechatUserInfo, error) {
 	}
 }
 
-func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state string) (string, error) {
+func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state string, show_in_qrcode bool) (string, error) {
 	post := map[string]any{
 		"redirect_uri":  redirect_uri,
 		"response_type": response_type,
 		"scope":         scope,
 		"state":         state,
-		"png":           false,
+		"png":           show_in_qrcode,
 	}
 	ret, err := Net.Post(baseUrl+offi_openid_url, map[string]interface{}{
 		"token": project,
