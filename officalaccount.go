@@ -124,7 +124,6 @@ func Wechat_offi_get_user_info(project, openid string) (WechatUserInfo, error) {
 	}
 }
 
-// Wechat_offi_openidUrl:redirect_url无需urlencode，AOSS会自动urlencode
 func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state string, show_in_qrcode bool) (string, error) {
 	post := map[string]any{
 		"redirect_uri":  redirect_uri,
