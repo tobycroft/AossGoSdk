@@ -14,3 +14,5 @@ const offi_user_list = "/v1/wechat/offiaccount/user_list"
 const offi_user_info = "/v1/wechat/offiaccount/user_info"
 const offi_openid_url = "/v1/wechat/offiaccount/openid_url"
 const offi_openid_aquire_from_code = "/v1/wechat/offiaccount/openid_aquire"
+
+const offi_template_send = "/v1/wechat/offiaccount/template_send"

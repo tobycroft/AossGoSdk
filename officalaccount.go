@@ -183,3 +183,39 @@ func Wechat_offi_openid_from_code(project, code any) (string, error) {
 		return "", errors.New(resp.Echo)
 	}
 }
+
+type Wechat_template_data_struct struct {
+	Value string `json:"value"`
+	Color string `json:"color"`
+}
+
+func Wechat_template_send(project, openid, template_id, url interface{}, data map[string]Wechat_template_data_struct) (string, error) {
+	dat, _ := jsoniter.MarshalToString(data)
+	post := map[string]any{
+		"openid":      openid,
+		"template_id": template_id,
+		"url":         url,
+		"data":        dat,
+	}
+	ret, err := Net.Post(baseUrl+offi_template_send, map[string]interface{}{
+		"token": project,
+	}, post, nil, nil)
+	if err != nil {
+		return "", err
+	}
+	var resp wechatRet
+	err = jsoniter.UnmarshalFromString(ret, &resp)
+	if err != nil {
+		return "", errors.New(ret)
+	}
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
+		return wwuf.Data, nil
+	} else {
+		return "", errors.New(resp.Echo)
+	}
+}
