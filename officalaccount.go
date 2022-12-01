@@ -156,7 +156,7 @@ func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state st
 	}
 }
 
-// Wechat_offi_openid_from_code:通过微信前端授权取回code后，通过该code获取openid
+// Wechat_offi_openid_from_code:通过微信前置授权取回code后，通过该code获取openid
 func Wechat_offi_openid_from_code(project, code any) (string, error) {
 	post := map[string]any{
 		"code": code,
