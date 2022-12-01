@@ -155,3 +155,31 @@ func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state st
 		return "", errors.New(resp.Echo)
 	}
 }
+
+// Wechat_offi_openidUrl:redirect_url无需urlencode，AOSS会自动urlencode
+func Wechat_offi_openid_from_code(project, code any) (string, error) {
+	post := map[string]any{
+		"code": code,
+	}
+	ret, err := Net.Post(baseUrl+offi_openid_url, map[string]interface{}{
+		"token": project,
+	}, post, nil, nil)
+	if err != nil {
+		return "", err
+	}
+	var resp wechatRet
+	err = jsoniter.UnmarshalFromString(ret, &resp)
+	if err != nil {
+		return "", errors.New(ret)
+	}
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
+		return wwuf.Data, nil
+	} else {
+		return "", errors.New(resp.Echo)
+	}
+}
