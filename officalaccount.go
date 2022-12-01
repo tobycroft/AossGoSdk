@@ -161,7 +161,7 @@ func Wechat_offi_openid_from_code(project, code any) (string, error) {
 	post := map[string]any{
 		"code": code,
 	}
-	ret, err := Net.Post(baseUrl+offi_openid_url, map[string]interface{}{
+	ret, err := Net.Post(baseUrl+offi_openid_aquire_from_code, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
