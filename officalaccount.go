@@ -156,7 +156,7 @@ func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state st
 	}
 }
 
-// Wechat_offi_openidUrl:redirect_url无需urlencode，AOSS会自动urlencode
+// Wechat_offi_openid_from_code:通过微信前端授权取回code后，通过该code获取openid
 func Wechat_offi_openid_from_code(project, code any) (string, error) {
 	post := map[string]any{
 		"code": code,
