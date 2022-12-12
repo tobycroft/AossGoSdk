@@ -112,6 +112,7 @@ type WechatSnsJscode2session struct {
 	Openid     string
 }
 
+// Wechat_sns_jscode2session:微信授权一键登录
 func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session, error) {
 	post := map[string]any{
 		"js_code": js_code,
@@ -150,6 +151,7 @@ type WechatWxaGEtUserPhoneNumber struct {
 	Watermark       interface{} `json:"watermark"`
 }
 
+// Wechat_wxa_getuserphonenumber:获取用户手机号
 func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneNumber, error) {
 	post := map[string]any{
 		"code": code,
