@@ -187,6 +187,7 @@ type WechatWxaGenerateScheme struct {
 	Openlink string
 }
 
+// Wechat_wxa_generatescheme:创建scheme-url地址
 func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expire_interval int) (WechatWxaGenerateScheme, error) {
 	post := map[string]any{
 		"path":            path,
