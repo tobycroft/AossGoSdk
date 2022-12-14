@@ -16,3 +16,5 @@ const offi_openid_url = "/v1/wechat/offiaccount/openid_url"
 const offi_openid_aquire_from_code = "/v1/wechat/offiaccount/openid_aquire"
 
 const offi_template_send = "/v1/wechat/offiaccount/template_send"
+
+const ticket_signature = "/v1/wechat/ticket/signature"
