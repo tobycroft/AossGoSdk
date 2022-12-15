@@ -97,6 +97,7 @@ type WechatUserInfo struct {
 	subscribe_time int64
 }
 
+// Wechat_offi_get_user_info:微信获取某个用户的详细情况（但是有可能获取不到）
 func Wechat_offi_get_user_info(project, openid string) (WechatUserInfo, error) {
 	post := map[string]any{
 		"openid": openid,
@@ -189,6 +190,7 @@ type Wechat_template_data_struct struct {
 	Color string `json:"color"`
 }
 
+// Wechat_template_send:微信发送模版功能
 func Wechat_template_send(project, openid, template_id, url interface{}, data map[string]Wechat_template_data_struct) (string, error) {
 	dat, _ := jsoniter.MarshalToString(data)
 	post := map[string]any{

@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// Wechat_ticket_signature:微信ticket签名功能
 func Wechat_ticket_signature(project, noncestr string, timestamp time.Time, url string) (string, error) {
 	post := map[string]any{
 		"noncestr":  noncestr,
