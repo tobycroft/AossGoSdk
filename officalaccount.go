@@ -6,6 +6,7 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
+// Wechat_get_accessToken:获取AccessToken，不推荐，建议使用0.0.0.0/0设定公众号
 func Wechat_get_accessToken(project string) error {
 	ret, err := Net.Post(baseUrl+get_accesstoken, map[string]interface{}{
 		"token": project,
@@ -60,6 +61,7 @@ type wechatDataMapStringInterface struct {
 	Data map[string]interface{}
 }
 
+// Wechat_offi_get_user_list:获取已关注用户的openid列表，slices仅限openid无法区别谁是谁
 func Wechat_offi_get_user_list(project string) ([]string, error) {
 	ret, err := Net.Post(baseUrl+offi_user_list, map[string]interface{}{
 		"token": project,
