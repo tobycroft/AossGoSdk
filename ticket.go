@@ -11,7 +11,7 @@ import (
 func Wechat_ticket_signature(project, noncestr string, timestamp time.Time, url string) (string, error) {
 	post := map[string]any{
 		"noncestr":  noncestr,
-		"timestamp": timestamp,
+		"timestamp": timestamp.Unix(),
 		"url":       url,
 	}
 	ret, err := Net.Post(baseUrl+ticket_signature, map[string]interface{}{
