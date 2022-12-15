@@ -7,51 +7,51 @@ import (
 )
 
 // Wechat_get_accessToken:获取AccessToken，不推荐，建议使用0.0.0.0/0设定公众号
-func Wechat_get_accessToken(project string) error {
-	ret, err := Net.Post(baseUrl+get_accesstoken, map[string]interface{}{
-		"token": project,
-	}, nil, nil, nil)
-	if err != nil {
-		return err
-	}
-	var resp wechatRet
-	err = jsoniter.UnmarshalFromString(ret, &resp)
-	if err != nil {
-		return errors.New(ret)
-	}
-	if resp.Code == 0 {
-		var dat wechatDataMapStringInterface
-		err = jsoniter.UnmarshalFromString(ret, &dat)
-		if err != nil {
-			return errors.New(ret)
-		}
-		postData := dat.Data["postdata"].(map[string]interface{})
-		ret, err = Net.Post(dat.Data["address"].(string), nil, postData, nil, nil)
-		if err != nil {
-			return err
-		}
-		ret, err = Net.Post(baseUrl+set_accesstoken, map[string]interface{}{
-			"token": project,
-		}, map[string]interface{}{
-			"data": ret,
-		}, nil, nil)
-		if err != nil {
-			return err
-		}
-		var resp2 wechatRet
-		err = jsoniter.UnmarshalFromString(ret, &resp2)
-		if err != nil {
-			return errors.New(ret)
-		}
-		if resp2.Code == 0 {
-			return nil
-		} else {
-			return errors.New(resp2.Echo)
-		}
-	} else {
-		return errors.New(resp.Echo)
-	}
-}
+//func Wechat_get_accessToken(project string) error {
+//	ret, err := Net.Post(baseUrl+get_accesstoken, map[string]interface{}{
+//		"token": project,
+//	}, nil, nil, nil)
+//	if err != nil {
+//		return err
+//	}
+//	var resp wechatRet
+//	err = jsoniter.UnmarshalFromString(ret, &resp)
+//	if err != nil {
+//		return errors.New(ret)
+//	}
+//	if resp.Code == 0 {
+//		var dat wechatDataMapStringInterface
+//		err = jsoniter.UnmarshalFromString(ret, &dat)
+//		if err != nil {
+//			return errors.New(ret)
+//		}
+//		postData := dat.Data["postdata"].(map[string]interface{})
+//		ret, err = Net.Post(dat.Data["address"].(string), nil, postData, nil, nil)
+//		if err != nil {
+//			return err
+//		}
+//		ret, err = Net.Post(baseUrl+set_accesstoken, map[string]interface{}{
+//			"token": project,
+//		}, map[string]interface{}{
+//			"data": ret,
+//		}, nil, nil)
+//		if err != nil {
+//			return err
+//		}
+//		var resp2 wechatRet
+//		err = jsoniter.UnmarshalFromString(ret, &resp2)
+//		if err != nil {
+//			return errors.New(ret)
+//		}
+//		if resp2.Code == 0 {
+//			return nil
+//		} else {
+//			return errors.New(resp2.Echo)
+//		}
+//	} else {
+//		return errors.New(resp.Echo)
+//	}
+//}
 
 type wechatDataSlices struct {
 	Data []string

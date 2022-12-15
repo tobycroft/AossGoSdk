@@ -1,7 +1,7 @@
 package AossGoSdk
 
-const get_accesstoken = "/v1/wechat/info/get_accesstoken"
-const set_accesstoken = "/v1/wechat/info/set_accesstoken"
+//const get_accesstoken = "/v1/wechat/info/get_accesstoken"
+//const set_accesstoken = "/v1/wechat/info/set_accesstoken"
 
 const unlimited_file = "/v1/wechat/wxa/unlimited_file"
 const unlimited_base64 = "/v1/wechat/wxa/unlimited_base64"
