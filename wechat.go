@@ -17,6 +17,7 @@ type wechatStringData struct {
 	Echo string
 }
 
+// Wechat_wxa_unlimited_file:获取微信小程序二维码（302方法，推荐占用少）
 func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 	post := map[string]any{
 		"data": data,
@@ -40,6 +41,7 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 	}
 }
 
+// Wechat_wxa_unlimited_raw:获取微信小程序二维码（文件流方法，不推荐会吃服务器内存）
 func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
 	post := map[string]any{
 		"data": data,
@@ -75,6 +77,7 @@ type WechatWxaScene struct {
 	Url  string
 }
 
+// Wechat_wxa_scene:微信scene解析
 func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
 	post := map[string]any{
 		"scene": scene,
