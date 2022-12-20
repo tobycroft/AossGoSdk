@@ -9,6 +9,16 @@ import (
 const Canvas_Type_text = "text"
 const Canvas_Type_image = "image"
 
+const Canvas_Posistion_TopLeft = "lt"
+const Canvas_Posistion_TopCenter = "mt"
+const Canvas_Posistion_TopRight = "rt"
+const Canvas_Posistion_CenterLeft = "lm"
+const Canvas_Posistion_CenterCenter = "mm"
+const Canvas_Posistion_CenterRight = "rm"
+const Canvas_Posistion_BottomLeft = "lb"
+const Canvas_Posistion_BottomCenter = "mb"
+const Canvas_Posistion_BottomRight = "rb"
+
 type Canvas_Type_Text struct {
 	Type     string `json:"type"`
 	Text     string `json:"text,omitempty"`
