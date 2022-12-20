@@ -20,4 +20,4 @@ const offi_template_send = "/v1/wechat/offiaccount/template_send"
 const ticket_signature = "/v1/wechat/ticket/signature"
 
 // ----------image-----------
-const canvas = "/v1/image/create/canvas"
+const canvas_file = "/v1/image/create/file"
