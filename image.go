@@ -33,21 +33,30 @@ type Canvas_Type_Image struct {
 	Y    int    `json:"y"`
 }
 
-type Canvas_type struct {
-	Canvas_Type_Text
-	Canvas_Type_Image
+type Canvas struct {
+	layer []interface{}
+}
+
+func (self *Canvas) AddText(text Canvas_Type_Text) *Canvas {
+	self.layer = append(self.layer, text)
+	return self
+}
+
+func (self *Canvas) AddImage(image Canvas_Type_Image) *Canvas {
+	self.layer = append(self.layer, image)
+	return self
 }
 
 // Canvas_url:获取微信小程序二维码（302方法，推荐占用少）
-func Canvas_url(project, width int64, height int64, background string, canvas_type []Canvas_type) (string, error) {
-	data, err := jsoniter.MarshalToString(canvas_type)
+func (self *Canvas) Get_Url(project, width int64, height int64, background_color string) (string, error) {
+	data, err := jsoniter.MarshalToString(self.layer)
 	if err != nil {
 		return "", err
 	}
 	post := map[string]any{
 		"width":      width,
 		"height":     height,
-		"background": background,
+		"background": background_color,
 		"data":       data,
 	}
 	ret, err := Net.Post(baseUrl+canvas_file, map[string]interface{}{
