@@ -57,7 +57,7 @@ func (self *Canvas) AddImage(Url string, X int64, Y int64) *Canvas {
 }
 
 // Canvas_url:获取微信小程序二维码（302方法，推荐占用少）
-func (self *Canvas) Get_Url(project, width int64, height int64, background_color string) (string, error) {
+func (self *Canvas) Get_Url(project interface{}, width int64, height int64, background_color string) (string, error) {
 	data, err := jsoniter.MarshalToString(self.layer)
 	if err != nil {
 		return "", err
