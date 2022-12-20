@@ -22,28 +22,39 @@ type Canvas_Type_Text struct {
 	Type     string `json:"type"`
 	Text     string `json:"text,omitempty"`
 	Position string `json:"position,omitempty"`
-	X        int    `json:"x"`
-	Y        int    `json:"y"`
+	X        int64  `json:"x"`
+	Y        int64  `json:"y"`
 }
 
 type Canvas_Type_Image struct {
 	Type string `json:"type"`
 	URL  string `json:"url,omitempty"`
-	X    int    `json:"x"`
-	Y    int    `json:"y"`
+	X    int64  `json:"x"`
+	Y    int64  `json:"y"`
 }
 
 type Canvas struct {
 	layer []interface{}
 }
 
-func (self *Canvas) AddText(text Canvas_Type_Text) *Canvas {
-	self.layer = append(self.layer, text)
+func (self *Canvas) AddText(Type string, Text string, Canvas_position string, X int64, Y int64) *Canvas {
+	self.layer = append(self.layer, Canvas_Type_Text{
+		Type:     Type,
+		Text:     Text,
+		Position: Canvas_position,
+		X:        X,
+		Y:        Y,
+	})
 	return self
 }
 
-func (self *Canvas) AddImage(image Canvas_Type_Image) *Canvas {
-	self.layer = append(self.layer, image)
+func (self *Canvas) AddImage(Type string, Url string, X int64, Y int64) *Canvas {
+	self.layer = append(self.layer, Canvas_Type_Image{
+		Type: Type,
+		URL:  Url,
+		X:    X,
+		Y:    Y,
+	})
 	return self
 }
 
