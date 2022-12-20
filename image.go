@@ -6,8 +6,6 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
-const Canvas_Type_text = "text"
-const Canvas_Type_image = "image"
 const Canvas_Posistion_TopLeft = "lt"
 const Canvas_Posistion_TopCenter = "mt"
 const Canvas_Posistion_TopRight = "rt"
@@ -37,9 +35,9 @@ type Canvas struct {
 	layer []interface{}
 }
 
-func (self *Canvas) AddText(Type string, Text string, Canvas_position string, X int64, Y int64) *Canvas {
+func (self *Canvas) AddText(Text string, Canvas_position string, X int64, Y int64) *Canvas {
 	self.layer = append(self.layer, Canvas_Type_Text{
-		Type:     Type,
+		Type:     "text",
 		Text:     Text,
 		Position: Canvas_position,
 		X:        X,
@@ -48,9 +46,9 @@ func (self *Canvas) AddText(Type string, Text string, Canvas_position string, X 
 	return self
 }
 
-func (self *Canvas) AddImage(Type string, Url string, X int64, Y int64) *Canvas {
+func (self *Canvas) AddImage(Url string, X int64, Y int64) *Canvas {
 	self.layer = append(self.layer, Canvas_Type_Image{
-		Type: Type,
+		Type: "image",
 		URL:  Url,
 		X:    X,
 		Y:    Y,
