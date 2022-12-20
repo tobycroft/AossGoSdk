@@ -6,6 +6,9 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
+const Canvas_Type_text = "text"
+const Canvas_Type_image = "image"
+
 type Canvas_Type_Text struct {
 	Type     string `json:"type"`
 	Text     string `json:"text,omitempty"`
