@@ -8,7 +8,6 @@ import (
 
 const Canvas_Type_text = "text"
 const Canvas_Type_image = "image"
-
 const Canvas_Posistion_TopLeft = "lt"
 const Canvas_Posistion_TopCenter = "mt"
 const Canvas_Posistion_TopRight = "rt"
