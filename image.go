@@ -21,8 +21,13 @@ type Canvas_Type_Image struct {
 	Y    int    `json:"y"`
 }
 
+type Canvas_type []struct {
+	Canvas_Type_Text
+	Canvas_Type_Image
+}
+
 // Canvas_url:获取微信小程序二维码（302方法，推荐占用少）
-func Canvas_url(project, width int64, height int64, background string, data string) (string, error) {
+func Canvas_url(project, width int64, height int64, background string, data Canvas_type) (string, error) {
 	post := map[string]any{
 		"width":      width,
 		"height":     height,
