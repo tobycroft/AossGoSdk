@@ -6,10 +6,6 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
-func Canvas_file() {
-
-}
-
 // Canvas_url:获取微信小程序二维码（302方法，推荐占用少）
 func Canvas_url(project, width int64, height int64, background string, data string) (string, error) {
 	post := map[string]any{
