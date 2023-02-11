@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-type Interface struct {
+type ASMS struct {
 	Name  string
 	Token string
 }
 
-func (self *Interface) Sms_send(phone any, quhao, text any) error {
+func (self *ASMS) Sms_send(phone any, quhao, text any) error {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"phone": phone,
