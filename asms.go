@@ -3,9 +3,10 @@ package AossGoSdk
 import (
 	"encoding/json"
 	"errors"
+	"time"
+
 	"github.com/tobycroft/Calc"
 	Net "github.com/tobycroft/TuuzNet"
-	"time"
 )
 
 type ASMS struct {
@@ -33,16 +34,17 @@ func (self *ASMS) Sms_send(phone any, quhao, text any) error {
 		if errs != nil {
 			return errors.New(ret)
 		} else {
-			if rs.code == 0 {
+			//fmt.Println(rs)
+			if rs.Code == 0 {
 				return nil
 			} else {
-				return errors.New(rs.echo)
+				return errors.New(rs.Echo)
 			}
 		}
 	}
 }
 
 type ret_struct struct {
-	code int64
-	echo string
+	Code int64
+	Echo string
 }
