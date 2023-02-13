@@ -44,6 +44,7 @@ func (self *Wechat_message) Send() error {
 		break
 
 	default:
+		url = baseUrls + message_send_text
 		break
 	}
 	ret, err := Net.Post(url, get, post, nil, nil)
