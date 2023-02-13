@@ -21,7 +21,7 @@ func (self *Wechat_message) set_openid(openid string) *Wechat_message {
 
 // set_token:如果不设定token
 func (self *Wechat_message) set_token(token string) {
-
+	self.Token = token
 }
 
 func (self *Wechat_message) Send() {
@@ -29,7 +29,8 @@ func (self *Wechat_message) Send() {
 		"openid":  self.openid,
 		"content": self.content,
 	}
-	ret, err := Net.Post(baseUrls+message_custom_send, map[string]interface{}{
+	get := map[string]interface{}{
 		"token": self.Token,
-	}, post, nil, nil)
+	}
+	ret, err := Net.Post(baseUrls+message_custom_send, get, post, nil, nil)
 }
