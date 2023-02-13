@@ -1,5 +1,5 @@
 package AossGoSdk
 
-func Wechat_custom_send_message() {
+func Wechat_message_custom_send() {
 
 }
