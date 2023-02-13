@@ -71,7 +71,7 @@ type Wechat_message_ret_struct struct {
 	CreateTime   any
 	MsgType      string
 	Event        string
-	EventKey     string
+	EventKey     any
 	Ticket       string
 	Content      string
 	MsgId        any
