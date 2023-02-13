@@ -21,3 +21,6 @@ const ticket_signature = "/v1/wechat/ticket/signature"
 
 // ----------image-----------
 const canvas_file = "/v1/image/create/file"
+
+// ---------message---------
+const message_custom_send = "/v1/wechat/message/send"
