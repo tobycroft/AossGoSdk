@@ -66,6 +66,7 @@ func (self *Wechat_message) Send() error {
 }
 
 type Wechat_message_ret_struct struct {
+	Project      string
 	ToUserName   string
 	FromUserName string
 	CreateTime   any
