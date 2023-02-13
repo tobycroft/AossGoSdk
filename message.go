@@ -13,18 +13,18 @@ type Wechat_message struct {
 	content  string
 }
 
-func (self *Wechat_message) set_message_type_text() *Wechat_message {
+func (self *Wechat_message) Set_message_type_text() *Wechat_message {
 	self.msg_type = "text"
 	return self
 }
 
-func (self *Wechat_message) set_openid(openid string) *Wechat_message {
+func (self *Wechat_message) Set_openid(openid string) *Wechat_message {
 	self.openid = openid
 	return self
 }
 
 // set_token:如果不设定token
-func (self *Wechat_message) set_token_not_set_for_auto(token string) *Wechat_message {
+func (self *Wechat_message) Set_token_not_set_for_auto(token string) *Wechat_message {
 	self.token = token
 	return self
 }
