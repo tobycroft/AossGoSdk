@@ -64,3 +64,16 @@ func (self *Wechat_message) Send() error {
 		}
 	}
 }
+
+type Wechat_message_struct struct {
+	ToUserName   string
+	FromUserName string
+	CreateTime   int64
+	MsgType      string
+	Event        string
+	EventKey     string
+	Ticket       string
+	Content      string
+	MsgId        int64
+	Idx          string
+}
