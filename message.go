@@ -13,8 +13,9 @@ type Wechat_message struct {
 	content  string
 }
 
-func (self *Wechat_message) Set_message_type_text() *Wechat_message {
+func (self *Wechat_message) Set_message_text(content string) *Wechat_message {
 	self.msg_type = "text"
+	self.content = content
 	return self
 }
 
