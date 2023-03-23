@@ -79,7 +79,9 @@ func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name interface{
 		"name":      self.Name,
 		"sign":      Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/sms/single/push", nil, param, nil, nil)
+	ret, err := Net.Post(baseUrls+"/v1/lcic/room/create", map[string]interface{}{
+		"token": self.Name,
+	}, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
 		return LcicStructCreateRoom{}, err
