@@ -25,6 +25,7 @@ type LcicStructCreateUser struct {
 	Token  string `json:"Token"`
 }
 
+// Lcic_CreateUser Name:用户在直播间的显示名称 | OriginId:用户在你系统中的标识符 | Avatar:用户头像url地址
 func (self *Lcic) Lcic_CreateUser(Name, OriginId, Avatar interface{}) (LcicStructCreateUser, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
@@ -69,6 +70,7 @@ type LcicStructCreateRoom struct {
 	RoomId int `json:"RoomId"`
 }
 
+// Lcic_RoomCreate TeacherId:老师ID | StartTime:开始时间int | EndTime:结束时间int | Name:房间名称
 func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name interface{}) (LcicStructCreateRoom, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
@@ -105,6 +107,7 @@ func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name interface{
 	}
 }
 
+// Lcic_RoomModify RoomId:房间ID | TeacherId:老师ID | StartTime:开始时间int | EndTime:结束时间int | Name:房间名称
 func (self *Lcic) Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name interface{}) (bool, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
@@ -139,6 +142,7 @@ func (self *Lcic) Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name in
 	}
 }
 
+// Lcic_RoomDelete RoomId:房间ID
 func (self *Lcic) Lcic_RoomDelete(RoomId interface{}) (bool, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
@@ -180,6 +184,7 @@ type LcicStructLinkUrl struct {
 	Pc  string `json:"pc"`
 }
 
+// Lcic_LinkUrl OriginId:学生id | TeacherId:老师id
 func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (LcicStructLinkUrl, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
