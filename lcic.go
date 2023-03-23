@@ -1,17 +1,17 @@
 package AossGoSdk
 
-func CreateUser(Name, OriginId, Avatar interface{}) {
+func Lcic_CreateUser(Name, OriginId, Avatar interface{}) {
 
 }
 
-func RoomCreate(TeacherId, StartTime, EndTime, Name interface{}) {
+func Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name interface{}) {
 
 }
 
-func RoomModify(RoomId, TeacherId, StartTime, EndTime, Name interface{}) {
+func Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name interface{}) {
 
 }
 
-func RoomDelete(RoomId interface{}) {
+func Lcic_RoomDelete(RoomId interface{}) {
 
 }
