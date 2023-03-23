@@ -52,7 +52,7 @@ func (self *Wechat_message) Send() error {
 	if err != nil {
 		return err
 	} else {
-		var resp wechatRet
+		var resp ret_std
 		err = jsoniter.UnmarshalFromString(ret, &resp)
 		if err != nil {
 			return err

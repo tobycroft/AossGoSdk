@@ -6,7 +6,7 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
-type wechatRet struct {
+type ret_std struct {
 	Code int64
 	Echo string
 }
@@ -88,7 +88,7 @@ func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
 	if err != nil {
 		return WechatWxaScene{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatWxaScene{}, errors.New(ret)
@@ -126,7 +126,7 @@ func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session
 	if err != nil {
 		return WechatSnsJscode2session{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatSnsJscode2session{}, errors.New(ret)
@@ -165,7 +165,7 @@ func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneN
 	if err != nil {
 		return WechatWxaGEtUserPhoneNumber{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
@@ -204,7 +204,7 @@ func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expi
 	if err != nil {
 		return WechatWxaGenerateScheme{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatWxaGenerateScheme{}, errors.New(ret)
