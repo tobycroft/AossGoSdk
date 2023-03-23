@@ -34,7 +34,9 @@ func (self *Lcic) Lcic_CreateUser(Name, OriginId, Avatar interface{}) (LcicStruc
 		"name":     self.Name,
 		"sign":     Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/lcic/user/auto", nil, param, nil, nil)
+	ret, err := Net.Post(baseUrls+"/v1/lcic/user/auto", map[string]interface{}{
+		"token": self.Name,
+	}, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
 		return LcicStructCreateUser{}, err
