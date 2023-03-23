@@ -169,7 +169,18 @@ func (self *Lcic) Lcic_RoomDelete(RoomId interface{}) (bool, error) {
 	}
 }
 
-func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (bool, error) {
+type lcicStructLinkUrl struct {
+	Code int               `json:"code"`
+	Data LcicStructLinkUrl `json:"data"`
+	Echo string            `json:"echo"`
+}
+
+type LcicStructLinkUrl struct {
+	Web string `json:"web"`
+	Pc  string `json:"pc"`
+}
+
+func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (LcicStructLinkUrl, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"OriginId":  OriginId,
@@ -183,19 +194,22 @@ func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (bool, error) {
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
-		return false, err
+		return LcicStructLinkUrl{}, err
 	} else {
-		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
-		if errs != nil {
-			return false, errs
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return true, nil
-			} else {
-				return false, errors.New(rs.Echo)
+		var resp ret_std
+		err = jsoniter.UnmarshalFromString(ret, &resp)
+		if err != nil {
+			return LcicStructLinkUrl{}, errors.New(ret)
+		}
+		if resp.Code == 0 {
+			var dat lcicStructLinkUrl
+			err = jsoniter.UnmarshalFromString(ret, &dat)
+			if err != nil {
+				return LcicStructLinkUrl{}, errors.New(ret)
 			}
+			return dat.Data, nil
+		} else {
+			return LcicStructLinkUrl{}, errors.New(resp.Echo)
 		}
 	}
 }
