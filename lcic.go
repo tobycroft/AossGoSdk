@@ -57,8 +57,47 @@ func (self *Lcic) Lcic_CreateUser(Name, OriginId, Avatar interface{}) (LcicStruc
 	}
 }
 
-func Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name interface{}) {
+type lcicStructCreateRoom struct {
+	Code int                  `json:"code"`
+	Data LcicStructCreateRoom `json:"data"`
+	Echo string               `json:"echo"`
+}
+type LcicStructCreateRoom struct {
+	RoomId int `json:"RoomId"`
+}
 
+func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name interface{}) (LcicStructCreateRoom, error) {
+	ts := time.Now().Unix()
+	param := map[string]any{
+		"Name":      Name,
+		"TeacherId": TeacherId,
+		"StartTime": StartTime,
+		"EndTime":   EndTime,
+		"ts":        ts,
+		"name":      self.Name,
+		"sign":      Calc.Md5(self.Token + Calc.Any2String(ts)),
+	}
+	ret, err := Net.Post(baseUrls+"/v1/sms/single/push", nil, param, nil, nil)
+	//fmt.Println(ret, err)
+	if err != nil {
+		return LcicStructCreateRoom{}, err
+	} else {
+		var resp ret_std
+		err = jsoniter.UnmarshalFromString(ret, &resp)
+		if err != nil {
+			return LcicStructCreateRoom{}, errors.New(ret)
+		}
+		if resp.Code == 0 {
+			var dat lcicStructCreateRoom
+			err = jsoniter.UnmarshalFromString(ret, &dat)
+			if err != nil {
+				return LcicStructCreateRoom{}, errors.New(ret)
+			}
+			return dat.Data, nil
+		} else {
+			return LcicStructCreateRoom{}, errors.New(resp.Echo)
+		}
+	}
 }
 
 func Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name interface{}) {
