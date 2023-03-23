@@ -29,7 +29,7 @@ func (self *ASMS) Sms_send(phone any, quhao, text any) error {
 	if err != nil {
 		return err
 	} else {
-		var rs ret_struct
+		var rs ret_std
 		errs := json.Unmarshal([]byte(ret), &rs)
 		if errs != nil {
 			return errors.New(ret)
@@ -42,9 +42,4 @@ func (self *ASMS) Sms_send(phone any, quhao, text any) error {
 			}
 		}
 	}
-}
-
-type ret_struct struct {
-	Code int64
-	Echo string
 }
