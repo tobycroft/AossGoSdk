@@ -224,7 +224,7 @@ func Wechat_template_send(project, openid, template_id, url interface{}, data ma
 	}
 }
 
-// Wechat_template_send:微信发送模版功能
+// Wechat_snsAuth:验证前端获取到的accesstoken和openid是否正确匹配
 func Wechat_snsAuth(project, access_token, openid interface{}) (string, error) {
 	post := map[string]any{
 		"openid":       openid,
