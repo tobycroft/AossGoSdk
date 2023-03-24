@@ -29,15 +29,20 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var wwuf wechatStringData
-	err = jsoniter.UnmarshalFromString(ret, &wwuf)
+	var resp ret_std
+	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return "", err
 	}
-	if wwuf.Code == 0 {
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
 		return wwuf.Data, nil
 	} else {
-		return wwuf.Data, errors.New(wwuf.Echo)
+		return "", errors.New(resp.Echo)
 	}
 }
 
@@ -53,15 +58,20 @@ func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var wwuf wechatStringData
-	err = jsoniter.UnmarshalFromString(ret, &wwuf)
+	var resp ret_std
+	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return nil, err
 	}
-	if wwuf.Code == 0 {
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return nil, err
+		}
 		return decode(wwuf.Data)
 	} else {
-		return nil, errors.New(wwuf.Echo)
+		return nil, errors.New(resp.Echo)
 	}
 }
 
