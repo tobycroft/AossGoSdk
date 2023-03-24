@@ -20,14 +20,20 @@ func Wechat_ticket_signature(project, noncestr string, timestamp time.Time, url 
 	if err != nil {
 		return "", err
 	}
-	var wwuf wechatStringData
-	err = jsoniter.UnmarshalFromString(ret, &wwuf)
+	var resp ret_std
+	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return "", err
 	}
-	if wwuf.Code == 0 {
+
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
 		return wwuf.Data, nil
 	} else {
-		return wwuf.Data, errors.New(wwuf.Echo)
+		return "", errors.New(resp.Echo)
 	}
 }
