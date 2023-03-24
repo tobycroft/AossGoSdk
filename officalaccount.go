@@ -223,3 +223,32 @@ func Wechat_template_send(project, openid, template_id, url interface{}, data ma
 		return "", errors.New(resp.Echo)
 	}
 }
+
+// Wechat_template_send:微信发送模版功能
+func Wechat_snsAuth(project, access_token, openid interface{}) (string, error) {
+	post := map[string]any{
+		"openid":       openid,
+		"access_token": access_token,
+	}
+	ret, err := Net.Post(baseUrl+sns_auth, map[string]interface{}{
+		"token": project,
+	}, post, nil, nil)
+	if err != nil {
+		return "", err
+	}
+	var resp ret_std
+	err = jsoniter.UnmarshalFromString(ret, &resp)
+	if err != nil {
+		return "", errors.New(ret)
+	}
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
+		return wwuf.Data, nil
+	} else {
+		return "", errors.New(resp.Echo)
+	}
+}
