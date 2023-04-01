@@ -14,7 +14,7 @@ import (
 //	if err != nil {
 //		return err
 //	}
-//	var resp wechatRet
+//	var resp ret_std
 //	err = jsoniter.UnmarshalFromString(ret, &resp)
 //	if err != nil {
 //		return errors.New(ret)
@@ -38,7 +38,7 @@ import (
 //		if err != nil {
 //			return err
 //		}
-//		var resp2 wechatRet
+//		var resp2 ret_std
 //		err = jsoniter.UnmarshalFromString(ret, &resp2)
 //		if err != nil {
 //			return errors.New(ret)
@@ -69,7 +69,7 @@ func Wechat_offi_get_user_list(project string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return nil, errors.New(ret)
@@ -110,7 +110,7 @@ func Wechat_offi_get_user_info(project, openid string) (WechatUserInfo, error) {
 	if err != nil {
 		return WechatUserInfo{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatUserInfo{}, errors.New(ret)
@@ -142,7 +142,7 @@ func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state st
 	if err != nil {
 		return "", err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return "", errors.New(ret)
@@ -170,7 +170,7 @@ func Wechat_offi_openid_from_code(project, code any) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return "", errors.New(ret)
@@ -207,7 +207,36 @@ func Wechat_template_send(project, openid, template_id, url interface{}, data ma
 	if err != nil {
 		return "", err
 	}
-	var resp wechatRet
+	var resp ret_std
+	err = jsoniter.UnmarshalFromString(ret, &resp)
+	if err != nil {
+		return "", errors.New(ret)
+	}
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
+		return wwuf.Data, nil
+	} else {
+		return "", errors.New(resp.Echo)
+	}
+}
+
+// Wechat_snsAuth:验证前端获取到的accesstoken和openid是否正确匹配
+func Wechat_snsAuth(project, access_token, openid interface{}) (string, error) {
+	post := map[string]any{
+		"openid":       openid,
+		"access_token": access_token,
+	}
+	ret, err := Net.Post(baseUrl+sns_auth, map[string]interface{}{
+		"token": project,
+	}, post, nil, nil)
+	if err != nil {
+		return "", err
+	}
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return "", errors.New(ret)

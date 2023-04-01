@@ -6,7 +6,7 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
-type wechatRet struct {
+type ret_std struct {
 	Code int64
 	Echo string
 }
@@ -29,15 +29,20 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var wwuf wechatStringData
-	err = jsoniter.UnmarshalFromString(ret, &wwuf)
+	var resp ret_std
+	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return "", err
 	}
-	if wwuf.Code == 0 {
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return "", err
+		}
 		return wwuf.Data, nil
 	} else {
-		return wwuf.Data, errors.New(wwuf.Echo)
+		return "", errors.New(resp.Echo)
 	}
 }
 
@@ -53,15 +58,20 @@ func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var wwuf wechatStringData
-	err = jsoniter.UnmarshalFromString(ret, &wwuf)
+	var resp ret_std
+	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return nil, err
 	}
-	if wwuf.Code == 0 {
+	if resp.Code == 0 {
+		var wwuf wechatStringData
+		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		if err != nil {
+			return nil, err
+		}
 		return decode(wwuf.Data)
 	} else {
-		return nil, errors.New(wwuf.Echo)
+		return nil, errors.New(resp.Echo)
 	}
 }
 
@@ -88,7 +98,7 @@ func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
 	if err != nil {
 		return WechatWxaScene{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatWxaScene{}, errors.New(ret)
@@ -126,7 +136,7 @@ func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session
 	if err != nil {
 		return WechatSnsJscode2session{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatSnsJscode2session{}, errors.New(ret)
@@ -165,7 +175,7 @@ func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneN
 	if err != nil {
 		return WechatWxaGEtUserPhoneNumber{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
@@ -204,7 +214,7 @@ func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expi
 	if err != nil {
 		return WechatWxaGenerateScheme{}, err
 	}
-	var resp wechatRet
+	var resp ret_std
 	err = jsoniter.UnmarshalFromString(ret, &resp)
 	if err != nil {
 		return WechatWxaGenerateScheme{}, errors.New(ret)
