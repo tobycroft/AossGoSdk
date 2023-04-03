@@ -24,7 +24,7 @@ func (self *ASMS) Sms_send(phone any, quhao, text any) error {
 		"name":  self.Name,
 		"sign":  Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/sms/single/push", nil, param, nil, nil)
+	ret, err := Net.Post(baseUrl+"/v1/sms/single/push", nil, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
 		return err
