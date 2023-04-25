@@ -33,17 +33,16 @@ type LiveStructCreateAll struct {
 	PlayRtmp    string `json:"play_rtmp"`
 }
 
-// RoomCreate TeacherId:老师ID | StartTime:开始时间int | EndTime:结束时间int | Name:房间名称
-func (self *Lcic) CreateAll(title any) (LiveStructCreateAll, error) {
+// CreateAll 创建房间并返回推流码和hls信息 Title 直播间地址（英文数字8位内）
+func (self *Live) CreateAll(title any) (LiveStructCreateAll, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"title": title,
 		"ts":    ts,
-		"name":  self.Name,
-		"sign":  Calc.Md5(self.Token + Calc.Any2String(ts)),
+		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
 	ret, err := Net.Post(baseUrls+"/v1/live/room/create_all", map[string]interface{}{
-		"token": self.Name,
+		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
@@ -83,17 +82,16 @@ type LiveStructCreateRoom struct {
 	RtmpOverSrt string `json:"rtmp_over_srt"`
 }
 
-// CreateRoom创建房间并返回房间数据
-func (self *Lcic) CreateRoom(title any) (LiveStructCreateRoom, error) {
+// CreateRoom 创建房间并返回推流码信息 Title 直播间地址（英文数字8位内）
+func (self *Live) CreateRoom(title any) (LiveStructCreateRoom, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"title": title,
 		"ts":    ts,
-		"name":  self.Name,
-		"sign":  Calc.Md5(self.Token + Calc.Any2String(ts)),
+		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
 	ret, err := Net.Post(baseUrls+"/v1/live/room/create", map[string]interface{}{
-		"token": self.Name,
+		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
@@ -130,16 +128,16 @@ type LiveStructPlayUrl struct {
 	PlayRtmp   string `json:"play_rtmp"`
 }
 
-// CreateRoom创建房间并返回房间数据
-func (self *Lcic) GetPlayUrl() (LiveStructPlayUrl, error) {
+// CreateRoom 返回hls信息 Title 直播间地址（英文数字8位内）
+func (self *Live) GetPlayUrl(title any) (LiveStructPlayUrl, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
-		"ts":   ts,
-		"name": self.Name,
-		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
+		"title": title,
+		"ts":    ts,
+		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
 	ret, err := Net.Post(baseUrls+"/v1/live/room/play_url", map[string]interface{}{
-		"token": self.Name,
+		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
