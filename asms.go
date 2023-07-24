@@ -14,12 +14,13 @@ type ASMS struct {
 	Token string
 }
 
-func (self *ASMS) Sms_send(phone any, quhao, text any) error {
+func (self *ASMS) Sms_send(phone any, quhao, text, ip any) error {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"phone": phone,
 		"quhao": quhao,
 		"text":  text,
+		"ip":    ip,
 		"ts":    ts,
 		"name":  self.Name,
 		"sign":  Calc.Md5(self.Token + Calc.Any2String(ts)),
