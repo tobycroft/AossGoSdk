@@ -10,11 +10,6 @@ type IP struct {
 	Token string
 	Code  string
 }
-type retBoolData struct {
-	Code int64
-	Data bool
-	Echo string
-}
 
 func (self *IP) IpRange(country any, province []any, ip any) (bool, error) {
 	province_json, err := jsoniter.MarshalToString(province)
@@ -32,13 +27,13 @@ func (self *IP) IpRange(country any, province []any, ip any) (bool, error) {
 	if err != nil {
 		return false, err
 	} else {
-		var rs retBoolData
+		var rs ret_std
 		errs := jsoniter.UnmarshalFromString(ret, &rs)
 		if errs != nil {
 			return false, errors.New(ret)
 		} else {
 			if rs.Code == 0 {
-				return rs.Data, nil
+				return true, nil
 			} else {
 				return false, errors.New(rs.Echo)
 			}
