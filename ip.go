@@ -18,6 +18,9 @@ type retBoolData struct {
 
 func (self *IP) IpRange(country any, province []any, ip any) (bool, error) {
 	province_json, err := jsoniter.MarshalToString(province)
+	if err != nil {
+		return false, err
+	}
 	param := map[string]any{
 		"country":  country,
 		"province": province_json,
