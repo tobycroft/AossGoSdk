@@ -1,0 +1,44 @@
+package AossGoSdk
+
+import (
+	"errors"
+	jsoniter "github.com/json-iterator/go"
+	Net "github.com/tobycroft/TuuzNet"
+)
+
+type IP struct {
+	Token string
+	Code  string
+}
+type retBoolData struct {
+	Code int64
+	Data bool
+	Echo string
+}
+
+func (self *IP) IpRange(country any, province []any, ip any) (bool, error) {
+	province_json, err := jsoniter.MarshalToString(province)
+	param := map[string]any{
+		"country":  country,
+		"province": province_json,
+		"ip":       ip,
+		"token":    self.Token,
+	}
+	ret, err := Net.Post(baseUrl+"/v1/ip/range/check", nil, param, nil, nil)
+	//fmt.Println(ret, err)
+	if err != nil {
+		return false, err
+	} else {
+		var rs retBoolData
+		errs := jsoniter.UnmarshalFromString(ret, &rs)
+		if errs != nil {
+			return false, errors.New(ret)
+		} else {
+			if rs.Code == 0 {
+				return rs.Data, nil
+			} else {
+				return false, errors.New(rs.Echo)
+			}
+		}
+	}
+}
