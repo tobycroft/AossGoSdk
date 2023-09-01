@@ -2,8 +2,8 @@ package AossGoSdk
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
+	jsoniter "github.com/json-iterator/go"
 	Net "github.com/tobycroft/TuuzNet"
 	"image"
 )
@@ -23,7 +23,7 @@ func (self *Captcha) Check(ident, code any) error {
 		return err
 	} else {
 		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
+		errs := jsoniter.UnmarshalFromString(ret, &rs)
 		if errs != nil {
 			return errors.New(ret)
 		} else {
