@@ -40,3 +40,34 @@ func (self *IP) IpRange(country any, province []any, ip any) (bool, error) {
 		}
 	}
 }
+
+// IpRangeAuth this will check the ip is in the ip range of the country and province,if not it will needs client to complete the captcha check
+func (self *IP) IpRangeAuth(country any, province []any, ip any) (bool, error) {
+	province_json, err := jsoniter.MarshalToString(province)
+	if err != nil {
+		return false, err
+	}
+	param := map[string]any{
+		"country":  country,
+		"province": province_json,
+		"ip":       ip,
+		"token":    self.Token,
+	}
+	ret, err := Net.Post(baseUrl+"/v1/ip/range/auth", nil, param, nil, nil)
+	//fmt.Println(ret, err)
+	if err != nil {
+		return false, err
+	} else {
+		var rs ret_std
+		errs := jsoniter.UnmarshalFromString(ret, &rs)
+		if errs != nil {
+			return false, errors.New(ret)
+		} else {
+			if rs.Code == 0 {
+				return true, nil
+			} else {
+				return false, errors.New(rs.Echo)
+			}
+		}
+	}
+}
