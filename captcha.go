@@ -18,7 +18,7 @@ func (self *Captcha) Check(ident, code any) error {
 		"code":  code,
 		"token": self.Token,
 	}
-	ret, err := Net.Post(baseUrl+"/v1/captcha/text/check", nil, param, nil, nil)
+	ret, err := Net.Post(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
 	if err != nil {
 		return err
 	} else {
