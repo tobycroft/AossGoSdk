@@ -41,7 +41,7 @@ func (self *IP) IpRange(country any, province []any, ip any) (bool, error) {
 	}
 }
 
-// IpRangeAuth this will check the ip is in the ip range of the country and province,if not it will needs client to complete the captcha check
+// IpRangeAuth this will check the ip is in the ip range of the country and province,if not it will needs client to complete the captcha check, this is recommended to be used if you are running a sms services
 func (self *IP) IpRangeAuth(country any, province []any, ip any) (bool, error) {
 	province_json, err := jsoniter.MarshalToString(province)
 	if err != nil {
