@@ -12,6 +12,7 @@ type Captcha struct {
 	Token any
 }
 
+// Check if the error returned not-nil that represents the captcha has errors
 func (self *Captcha) Check(ident, code any) error {
 	param := map[string]any{
 		"ident": ident,
@@ -32,6 +33,32 @@ func (self *Captcha) Check(ident, code any) error {
 				return nil
 			} else {
 				return errors.New(rs.Echo)
+			}
+		}
+	}
+}
+
+// CheckWithCode This function will return the httpcode if the captcha is not valid, the code will be returned as -103, code 200 for network error, code 500 for json decode error
+func (self *Captcha) CheckWithCode(ident, code any) (int64, error) {
+	param := map[string]any{
+		"ident": ident,
+		"code":  code,
+		"token": self.Token,
+	}
+	ret, err := Net.Post(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	if err != nil {
+		return 200, err
+	} else {
+		var rs ret_std
+		errs := jsoniter.UnmarshalFromString(ret, &rs)
+		if errs != nil {
+			return 500, errors.New(ret)
+		} else {
+			//fmt.Println(rs)
+			if rs.Code == 0 {
+				return rs.Code, nil
+			} else {
+				return rs.Code, errors.New(rs.Echo)
 			}
 		}
 	}
