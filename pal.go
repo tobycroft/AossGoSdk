@@ -12,11 +12,13 @@ type PalWorld struct {
 	Name  string
 	Token string
 }
+
 type OnlineUser struct {
 	Name      string `json:"name"`
 	Playeruid string `json:"playeruid"`
 	Steamid   string `json:"steamid"`
 }
+
 type onlineUser struct {
 	Code int          `json:"code"`
 	Data []OnlineUser `json:"data"`
