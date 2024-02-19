@@ -14,17 +14,18 @@ type ASMS struct {
 	Token string
 }
 
-func (self *ASMS) Sms_send(phone any, quhao, text any) error {
+func (self *ASMS) Sms_send(phone any, quhao, text, ip any) error {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"phone": phone,
 		"quhao": quhao,
 		"text":  text,
+		"ip":    ip,
 		"ts":    ts,
 		"name":  self.Name,
 		"sign":  Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/sms/single/push", nil, param, nil, nil)
+	ret, err := Net.Post(baseUrl+"/v1/sms/single/push", nil, param, nil, nil)
 	//fmt.Println(ret, err)
 	if err != nil {
 		return err
