@@ -1,6 +1,7 @@
 package AossGoSdk
 
 import (
+	"encoding/json"
 	"errors"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/tobycroft/Calc"
@@ -25,8 +26,7 @@ type onlineUser struct {
 	Echo string       `json:"echo"`
 }
 
-// Lcic_CreateUser Name:用户在直播间的显示名称 | OriginId:用户在你系统中的标识符 | Avatar:用户头像url地址
-func (self *Lcic) OnlineUser() ([]OnlineUser, error) {
+func (self PalWorld) ShowPlayers() ([]OnlineUser, error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"ts":   ts,
@@ -54,6 +54,95 @@ func (self *Lcic) OnlineUser() ([]OnlineUser, error) {
 			return dat.Data, nil
 		} else {
 			return nil, errors.New(resp.Echo)
+		}
+	}
+}
+
+func (self PalWorld) Kick(id any) error {
+	ts := time.Now().Unix()
+	param := map[string]any{
+		"id":   id,
+		"ts":   ts,
+		"name": self.Name,
+		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
+	}
+	ret, err := Net.Post(baseUrls+"/v1/rcon/palworld/kick", map[string]interface{}{
+		"token": self.Name,
+	}, param, nil, nil)
+	//fmt.Println(ret, err)
+	if err != nil {
+		return err
+	} else {
+		var rs ret_std
+		errs := json.Unmarshal([]byte(ret), &rs)
+		if errs != nil {
+			return errors.New(ret)
+		} else {
+			//fmt.Println(rs)
+			if rs.Code == 0 {
+				return nil
+			} else {
+				return errors.New(rs.Echo)
+			}
+		}
+	}
+}
+
+func (self PalWorld) Ban(id any) error {
+	ts := time.Now().Unix()
+	param := map[string]any{
+		"id":   id,
+		"ts":   ts,
+		"name": self.Name,
+		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
+	}
+	ret, err := Net.Post(baseUrls+"/v1/rcon/palworld/ban", map[string]interface{}{
+		"token": self.Name,
+	}, param, nil, nil)
+	//fmt.Println(ret, err)
+	if err != nil {
+		return err
+	} else {
+		var rs ret_std
+		errs := json.Unmarshal([]byte(ret), &rs)
+		if errs != nil {
+			return errors.New(ret)
+		} else {
+			//fmt.Println(rs)
+			if rs.Code == 0 {
+				return nil
+			} else {
+				return errors.New(rs.Echo)
+			}
+		}
+	}
+}
+
+func (self PalWorld) Ping() error {
+	ts := time.Now().Unix()
+	param := map[string]any{
+		"ts":   ts,
+		"name": self.Name,
+		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
+	}
+	ret, err := Net.Post(baseUrls+"/v1/rcon/palworld/ping", map[string]interface{}{
+		"token": self.Name,
+	}, param, nil, nil)
+	//fmt.Println(ret, err)
+	if err != nil {
+		return err
+	} else {
+		var rs ret_std
+		errs := json.Unmarshal([]byte(ret), &rs)
+		if errs != nil {
+			return errors.New(ret)
+		} else {
+			//fmt.Println(rs)
+			if rs.Code == 0 {
+				return nil
+			} else {
+				return errors.New(rs.Echo)
+			}
 		}
 	}
 }
