@@ -30,7 +30,7 @@ func (self *Wechat_message) Set_token_not_set_for_auto(token string) *Wechat_mes
 	return self
 }
 
-func (self *Wechat_message) Send() error {
+func (self *Wechat_message) Send() (err error) {
 	post := map[string]any{
 		"openid":  self.openid,
 		"content": self.content,
@@ -49,19 +49,15 @@ func (self *Wechat_message) Send() error {
 		break
 	}
 	rets := new(Net.Post).PostFormDataAny(url, get, post, nil, nil)
+	var resp ret_std
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return err
+	}
+	if resp.Code == 0 {
+		return nil
 	} else {
-		var resp ret_std
-		err = rets.RetJson(&resp)
-		if err != nil {
-			return err
-		}
-		if resp.Code == 0 {
-			return nil
-		} else {
-			return errors.New(resp.Echo)
-		}
+		return errors.New(resp.Echo)
 	}
 }
 
