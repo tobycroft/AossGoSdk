@@ -1,12 +1,12 @@
 package AossGoSdk
 
 import (
-	"encoding/json"
 	"errors"
 
 	"time"
 
 	"github.com/tobycroft/Calc"
+	Net "github.com/tobycroft/TuuzNet"
 )
 
 type Lcic struct {
@@ -67,9 +67,9 @@ type LcicStructCreateRoom struct {
 }
 
 // Lcic_RoomCreate TeacherId:老师ID | StartTime:开始时间int | EndTime:结束时间int | Name:房间名称
-func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name string) (room LcicStructCreateRoom, err error) {
-	ts := Calc.Any2String(time.Now().Unix())
-	param := map[string]string{
+func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name any) (room LcicStructCreateRoom, err error) {
+	ts := time.Now().Unix()
+	param := map[string]any{
 		"Name":      Name,
 		"TeacherId": TeacherId,
 		"StartTime": StartTime,
@@ -78,7 +78,7 @@ func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name string) (r
 		"name":      self.Name,
 		"sign":      Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormData(baseUrls+"/v1/lcic/room/create", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/lcic/room/create", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -89,9 +89,9 @@ func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name string) (r
 	}
 	if resp.Code == 0 {
 		var dat lcicStructCreateRoom
-		err = jsoniter.UnmarshalFromString(ret, &dat)
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return LcicStructCreateRoom{}, errors.New(ret)
+			return
 		}
 		return dat.Data, nil
 	} else {
@@ -100,9 +100,9 @@ func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name string) (r
 }
 
 // Lcic_RoomModify RoomId:房间ID | TeacherId:老师ID | StartTime:开始时间int | EndTime:结束时间int | Name:房间名称
-func (self *Lcic) Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name string) (bool, error) {
+func (self *Lcic) Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name any) (b bool, err error) {
 	ts := Calc.Any2String(time.Now().Unix())
-	param := map[string]string{
+	param := map[string]any{
 		"RoomId":    RoomId,
 		"Name":      Name,
 		"TeacherId": TeacherId,
@@ -116,26 +116,20 @@ func (self *Lcic) Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name st
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var rs ret_std
+	err = rets.RetJson(&rs)
 	if err != nil {
 		return false, err
+	}
+	if rs.Code == 0 {
+		return true, nil
 	} else {
-		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
-		if errs != nil {
-			return false, errs
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return true, nil
-			} else {
-				return false, errors.New(rs.Echo)
-			}
-		}
+		return false, errors.New(rs.Echo)
 	}
 }
 
 // Lcic_RoomDelete RoomId:房间ID
-func (self *Lcic) Lcic_RoomDelete(RoomId interface{}) (bool, error) {
+func (self *Lcic) Lcic_RoomDelete(RoomId interface{}) (b bool, err error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"RoomId": RoomId,
@@ -147,21 +141,16 @@ func (self *Lcic) Lcic_RoomDelete(RoomId interface{}) (bool, error) {
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var rs ret_std
+	err = rets.RetJson(&rs)
 	if err != nil {
-		return false, err
+		return
+	}
+	//fmt.Println(rs)
+	if rs.Code == 0 {
+		return true, nil
 	} else {
-		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
-		if errs != nil {
-			return false, errs
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return true, nil
-			} else {
-				return false, errors.New(rs.Echo)
-			}
-		}
+		return false, errors.New(rs.Echo)
 	}
 }
 
@@ -177,7 +166,7 @@ type LcicStructLinkUrl struct {
 }
 
 // Lcic_LinkUrl OriginId:学生id | TeacherId:老师id
-func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (LcicStructLinkUrl, error) {
+func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (url LcicStructLinkUrl, err error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"OriginId":  OriginId,
@@ -190,23 +179,19 @@ func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (LcicStructLinkU
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var resp ret_std
+	err = rets.RetJson(&resp)
 	if err != nil {
-		return LcicStructLinkUrl{}, err
-	} else {
-		var resp ret_std
-		err = rets.RetJson(&resp)
+		return
+	}
+	if resp.Code == 0 {
+		var dat lcicStructLinkUrl
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return LcicStructLinkUrl{}, errors.New(ret)
+			return
 		}
-		if resp.Code == 0 {
-			var dat lcicStructLinkUrl
-			err = jsoniter.UnmarshalFromString(ret, &dat)
-			if err != nil {
-				return LcicStructLinkUrl{}, errors.New(ret)
-			}
-			return dat.Data, nil
-		} else {
-			return LcicStructLinkUrl{}, errors.New(resp.Echo)
-		}
+		return dat.Data, nil
+	} else {
+		return LcicStructLinkUrl{}, errors.New(resp.Echo)
 	}
 }
