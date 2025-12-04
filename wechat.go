@@ -18,7 +18,7 @@ type wechatStringData struct {
 }
 
 // Wechat_wxa_unlimited_file:获取微信小程序二维码（302方法，推荐占用少）
-func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
+func Wechat_wxa_unlimited_file(project, data, page string) (str string, err error) {
 	post := map[string]any{
 		"data": data,
 		"page": page,
@@ -26,9 +26,6 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 	rets := new(Net.Post).PostFormDataAny(baseUrl+unlimited_file, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
-	if err != nil {
-		return "", err
-	}
 	var resp ret_std
 	err = rets.RetJson(&resp)
 	if err != nil {
@@ -36,7 +33,7 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 	}
 	if resp.Code == 0 {
 		var wwuf wechatStringData
-		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		err = rets.RetJson(&wwuf)
 		if err != nil {
 			return "", err
 		}
@@ -47,7 +44,7 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 }
 
 // Wechat_wxa_unlimited_raw:获取微信小程序二维码（文件流方法，不推荐会吃服务器内存）
-func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
+func Wechat_wxa_unlimited_raw(project, data, page string) (b []byte, err error) {
 	post := map[string]any{
 		"data": data,
 		"page": page,
@@ -55,9 +52,6 @@ func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
 	rets := new(Net.Post).PostFormDataAny(baseUrl+unlimited_base64, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
-	if err != nil {
-		return nil, err
-	}
 	var resp ret_std
 	err = rets.RetJson(&resp)
 	if err != nil {
@@ -65,7 +59,7 @@ func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
 	}
 	if resp.Code == 0 {
 		var wwuf wechatStringData
-		err = jsoniter.UnmarshalFromString(ret, &wwuf)
+		err = rets.RetJson(&wwuf)
 		if err != nil {
 			return nil, err
 		}
@@ -88,27 +82,21 @@ type WechatWxaScene struct {
 }
 
 // Wechat_wxa_scene:微信scene解析
-func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
+func Wechat_wxa_scene(project, scene string) (sen WechatWxaScene, err error) {
 	post := map[string]any{
 		"scene": scene,
 	}
 	rets := new(Net.Post).PostFormDataAny(baseUrl+wxa_scene, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
-	if err != nil {
-		return WechatWxaScene{}, err
-	}
 	var resp ret_std
 	err = rets.RetJson(&resp)
 	if err != nil {
-		return WechatWxaScene{}, errors.New(ret)
+		return
 	}
 	if resp.Code == 0 {
 		var dat wechatWxaRet
-		err = jsoniter.UnmarshalFromString(ret, &dat)
-		if err != nil {
-			return WechatWxaScene{}, errors.New(ret)
-		}
+		err = rets.RetJson(&dat)
 		return dat.Data, nil
 	} else {
 		return WechatWxaScene{}, errors.New(resp.Echo)
@@ -126,26 +114,23 @@ type WechatSnsJscode2session struct {
 }
 
 // Wechat_sns_jscode2session:微信授权一键登录
-func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session, error) {
+func Wechat_sns_jscode2session(project, js_code string) (session WechatSnsJscode2session, err error) {
 	post := map[string]any{
 		"js_code": js_code,
 	}
 	rets := new(Net.Post).PostFormDataAny(baseUrl+jscode, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
-	if err != nil {
-		return WechatSnsJscode2session{}, err
-	}
 	var resp ret_std
 	err = rets.RetJson(&resp)
 	if err != nil {
-		return WechatSnsJscode2session{}, errors.New(ret)
+		return
 	}
 	if resp.Code == 0 {
 		var dat wechatSnsJscode2sessionRet
-		err = jsoniter.UnmarshalFromString(ret, &dat)
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return WechatSnsJscode2session{}, errors.New(ret)
+			return
 		}
 		return dat.Data, nil
 	} else {
@@ -165,26 +150,23 @@ type WechatWxaGEtUserPhoneNumber struct {
 }
 
 // Wechat_wxa_getuserphonenumber:获取用户手机号
-func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneNumber, error) {
+func Wechat_wxa_getuserphonenumber(project, code string) (num WechatWxaGEtUserPhoneNumber, err error) {
 	post := map[string]any{
 		"code": code,
 	}
 	rets := new(Net.Post).PostFormDataAny(baseUrl+getuserphonenumber, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
-	if err != nil {
-		return WechatWxaGEtUserPhoneNumber{}, err
-	}
 	var resp ret_std
 	err = rets.RetJson(&resp)
 	if err != nil {
-		return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
+		return
 	}
 	if resp.Code == 0 {
 		var dat wechatWxaGEtUserPhoneNumberRet
-		err = jsoniter.UnmarshalFromString(ret, &dat)
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
+			return
 		}
 		return dat.Data, nil
 	} else {
@@ -201,7 +183,7 @@ type WechatWxaGenerateScheme struct {
 }
 
 // Wechat_wxa_generatescheme:创建scheme-url地址
-func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expire_interval int) (WechatWxaGenerateScheme, error) {
+func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expire_interval int) (sche WechatWxaGenerateScheme, err error) {
 	post := map[string]any{
 		"path":            path,
 		"query":           query,
@@ -211,19 +193,16 @@ func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expi
 	rets := new(Net.Post).PostFormDataAny(baseUrl+generatescheme, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
-	if err != nil {
-		return WechatWxaGenerateScheme{}, err
-	}
 	var resp ret_std
 	err = rets.RetJson(&resp)
 	if err != nil {
-		return WechatWxaGenerateScheme{}, errors.New(ret)
+		return
 	}
 	if resp.Code == 0 {
 		var dat wechatWxaGenerateSchemeRet
-		err = jsoniter.UnmarshalFromString(ret, &dat)
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return WechatWxaGenerateScheme{}, errors.New(ret)
+			return
 		}
 		return dat.Data, nil
 	} else {
