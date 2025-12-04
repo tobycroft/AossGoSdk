@@ -2,7 +2,7 @@ package AossGoSdk
 
 import (
 	"errors"
-	jsoniter "github.com/json-iterator/go"
+
 	Net "github.com/tobycroft/TuuzNet"
 )
 
@@ -23,14 +23,14 @@ func Wechat_wxa_unlimited_file(project, data, page string) (string, error) {
 		"data": data,
 		"page": page,
 	}
-	ret, err := Net.Post(baseUrl+unlimited_file, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+unlimited_file, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return "", err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return "", err
 	}
@@ -52,14 +52,14 @@ func Wechat_wxa_unlimited_raw(project, data, page string) ([]byte, error) {
 		"data": data,
 		"page": page,
 	}
-	ret, err := Net.Post(baseUrl+unlimited_base64, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+unlimited_base64, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return nil, err
 	}
@@ -92,14 +92,14 @@ func Wechat_wxa_scene(project, scene string) (WechatWxaScene, error) {
 	post := map[string]any{
 		"scene": scene,
 	}
-	ret, err := Net.Post(baseUrl+wxa_scene, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+wxa_scene, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return WechatWxaScene{}, err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return WechatWxaScene{}, errors.New(ret)
 	}
@@ -130,14 +130,14 @@ func Wechat_sns_jscode2session(project, js_code string) (WechatSnsJscode2session
 	post := map[string]any{
 		"js_code": js_code,
 	}
-	ret, err := Net.Post(baseUrl+jscode, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+jscode, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return WechatSnsJscode2session{}, err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return WechatSnsJscode2session{}, errors.New(ret)
 	}
@@ -169,14 +169,14 @@ func Wechat_wxa_getuserphonenumber(project, code string) (WechatWxaGEtUserPhoneN
 	post := map[string]any{
 		"code": code,
 	}
-	ret, err := Net.Post(baseUrl+getuserphonenumber, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+getuserphonenumber, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return WechatWxaGEtUserPhoneNumber{}, err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return WechatWxaGEtUserPhoneNumber{}, errors.New(ret)
 	}
@@ -208,14 +208,14 @@ func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expi
 		"is_expire":       is_expire,
 		"expire_interval": expire_interval,
 	}
-	ret, err := Net.Post(baseUrl+generatescheme, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+generatescheme, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return WechatWxaGenerateScheme{}, err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return WechatWxaGenerateScheme{}, errors.New(ret)
 	}

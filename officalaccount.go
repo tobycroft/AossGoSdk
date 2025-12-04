@@ -2,20 +2,20 @@ package AossGoSdk
 
 import (
 	"errors"
-	jsoniter "github.com/json-iterator/go"
+
 	Net "github.com/tobycroft/TuuzNet"
 )
 
 // Wechat_get_accessToken:获取AccessToken，不推荐，建议使用0.0.0.0/0设定公众号
 //func Wechat_get_accessToken(project string) error {
-//	ret, err := Net.Post(baseUrl+get_accesstoken, map[string]interface{}{
+//	rets := new(Net.Post).PostFormDataAny(baseUrl+get_accesstoken, map[string]interface{}{
 //		"token": project,
 //	}, nil, nil, nil)
 //	if err != nil {
 //		return err
 //	}
 //	var resp ret_std
-//	err = jsoniter.UnmarshalFromString(ret, &resp)
+//	err = rets.RetJson(&resp)
 //	if err != nil {
 //		return errors.New(ret)
 //	}
@@ -26,11 +26,11 @@ import (
 //			return errors.New(ret)
 //		}
 //		postData := dat.Data["postdata"].(map[string]interface{})
-//		ret, err = Net.Post(dat.Data["address"].(string), nil, postData, nil, nil)
+//		ret, err = new(Net.Post).PostFormDataAny(dat.Data["address"].(string), nil, postData, nil, nil)
 //		if err != nil {
 //			return err
 //		}
-//		ret, err = Net.Post(baseUrl+set_accesstoken, map[string]interface{}{
+//		ret, err = new(Net.Post).PostFormDataAny(baseUrl+set_accesstoken, map[string]interface{}{
 //			"token": project,
 //		}, map[string]interface{}{
 //			"data": ret,
@@ -63,14 +63,14 @@ type wechatDataMapStringInterface struct {
 
 // Wechat_offi_get_user_list:获取已关注用户的openid列表，slices仅限openid无法区别谁是谁
 func Wechat_offi_get_user_list(project string) ([]string, error) {
-	ret, err := Net.Post(baseUrl+offi_user_list, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_user_list, map[string]interface{}{
 		"token": project,
 	}, nil, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return nil, errors.New(ret)
 	}
@@ -104,14 +104,14 @@ func Wechat_offi_get_user_info(project, openid string) (WechatUserInfo, error) {
 	post := map[string]any{
 		"openid": openid,
 	}
-	ret, err := Net.Post(baseUrl+offi_user_list, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_user_list, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return WechatUserInfo{}, err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return WechatUserInfo{}, errors.New(ret)
 	}
@@ -136,14 +136,14 @@ func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state st
 		"state":         state,
 		"png":           show_in_qrcode,
 	}
-	ret, err := Net.Post(baseUrl+offi_openid_url, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_openid_url, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return "", err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return "", errors.New(ret)
 	}
@@ -164,14 +164,14 @@ func Wechat_offi_openid_from_code(project, code any) (string, error) {
 	post := map[string]any{
 		"code": code,
 	}
-	ret, err := Net.Post(baseUrl+offi_openid_aquire_from_code, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_openid_aquire_from_code, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return "", err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return "", errors.New(ret)
 	}
@@ -201,14 +201,14 @@ func Wechat_template_send(project, openid, template_id, url interface{}, data ma
 		"url":         url,
 		"data":        dat,
 	}
-	ret, err := Net.Post(baseUrl+offi_template_send, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_template_send, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return "", err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return "", errors.New(ret)
 	}
@@ -230,14 +230,14 @@ func Wechat_snsAuth(project, access_token, openid interface{}) (string, error) {
 		"openid":       openid,
 		"access_token": access_token,
 	}
-	ret, err := Net.Post(baseUrl+sns_auth, map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrl+sns_auth, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	if err != nil {
 		return "", err
 	}
 	var resp ret_std
-	err = jsoniter.UnmarshalFromString(ret, &resp)
+	err = rets.RetJson(&resp)
 	if err != nil {
 		return "", errors.New(ret)
 	}

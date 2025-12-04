@@ -1,7 +1,6 @@
 package AossGoSdk
 
 import (
-	"encoding/json"
 	"errors"
 	"time"
 
@@ -14,7 +13,7 @@ type ASMS struct {
 	Token string
 }
 
-func (self *ASMS) Sms_send(phone any, quhao, text, ip any) error {
+func (self *ASMS) Sms_send(phone any, quhao, text, ip any) (err error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"phone": phone,
@@ -25,22 +24,12 @@ func (self *ASMS) Sms_send(phone any, quhao, text, ip any) error {
 		"name":  self.Name,
 		"sign":  Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrl+"/v1/sms/single/push", nil, param, nil, nil)
-	//fmt.Println(ret, err)
-	if err != nil {
-		return err
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/sms/single/push", nil, param, nil, nil)
+	var rs ret_std
+	err = rets.RetJson(&rs)
+	if rs.Code == 0 {
+		return nil
 	} else {
-		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
-		if errs != nil {
-			return errors.New(ret)
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return nil
-			} else {
-				return errors.New(rs.Echo)
-			}
-		}
+		return errors.New(rs.Echo)
 	}
 }

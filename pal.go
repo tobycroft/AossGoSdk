@@ -1,11 +1,11 @@
 package AossGoSdk
 
 import (
-	"encoding/json"
 	"errors"
-	jsoniter "github.com/json-iterator/go"
+
 	"github.com/tobycroft/Calc"
 	Net "github.com/tobycroft/TuuzNet"
+
 	"time"
 )
 
@@ -26,35 +26,32 @@ type onlineUser struct {
 	Echo string       `json:"echo"`
 }
 
-func (self PalWorld) ShowPlayers() ([]OnlineUser, error) {
+func (self PalWorld) ShowPlayers() (users []OnlineUser, err error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"ts":   ts,
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/rcon/palworld/players", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/players", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var resp ret_std
+	err = rets.RetJson(&resp)
 	if err != nil {
-		return nil, err
-	} else {
-		var resp ret_std
-		err = jsoniter.UnmarshalFromString(ret, &resp)
+		return
+	}
+	if resp.Code == 0 {
+		var dat onlineUser
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return nil, errors.New(ret)
+			return
 		}
-		if resp.Code == 0 {
-			var dat onlineUser
-			err = jsoniter.UnmarshalFromString(ret, &dat)
-			if err != nil {
-				return nil, errors.New(ret)
-			}
-			return dat.Data, nil
-		} else {
-			return nil, errors.New(resp.Echo)
-		}
+		users = dat.Data
+		return
+	} else {
+		return nil, errors.New(resp.Echo)
 	}
 }
 
@@ -66,25 +63,19 @@ func (self PalWorld) Kick(id any) error {
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/rcon/palworld/kick", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/kick", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var rs ret_std
+	err := rets.RetJson(&rs)
 	if err != nil {
 		return err
+	}
+	if rs.Code == 0 {
+		return nil
 	} else {
-		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
-		if errs != nil {
-			return errors.New(ret)
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return nil
-			} else {
-				return errors.New(rs.Echo)
-			}
-		}
+		return errors.New(rs.Echo)
 	}
 }
 
@@ -96,25 +87,18 @@ func (self PalWorld) Ban(id any) error {
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/rcon/palworld/ban", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/ban", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
-	//fmt.Println(ret, err)
+	var rs ret_std
+	err := rets.RetJson(&rs)
 	if err != nil {
 		return err
+	}
+	if rs.Code == 0 {
+		return nil
 	} else {
-		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
-		if errs != nil {
-			return errors.New(ret)
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return nil
-			} else {
-				return errors.New(rs.Echo)
-			}
-		}
+		return errors.New(rs.Echo)
 	}
 }
 
@@ -125,24 +109,17 @@ func (self PalWorld) Ping() error {
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/rcon/palworld/ping", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/ping", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
-	//fmt.Println(ret, err)
+	var rs ret_std
+	err := rets.RetJson(&rs)
 	if err != nil {
 		return err
+	}
+	if rs.Code == 0 {
+		return nil
 	} else {
-		var rs ret_std
-		errs := json.Unmarshal([]byte(ret), &rs)
-		if errs != nil {
-			return errors.New(ret)
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return nil
-			} else {
-				return errors.New(rs.Echo)
-			}
-		}
+		return errors.New(rs.Echo)
 	}
 }

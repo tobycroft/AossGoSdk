@@ -2,7 +2,7 @@ package AossGoSdk
 
 import (
 	"errors"
-	jsoniter "github.com/json-iterator/go"
+
 	Net "github.com/tobycroft/TuuzNet"
 )
 
@@ -48,12 +48,12 @@ func (self *Wechat_message) Send() error {
 		url = baseUrls + message_send_text
 		break
 	}
-	ret, err := Net.Post(url, get, post, nil, nil)
+	rets := new(Net.Post).PostFormDataAny(url, get, post, nil, nil)
 	if err != nil {
 		return err
 	} else {
 		var resp ret_std
-		err = jsoniter.UnmarshalFromString(ret, &resp)
+		err = rets.RetJson(&resp)
 		if err != nil {
 			return err
 		}

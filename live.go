@@ -2,10 +2,10 @@ package AossGoSdk
 
 import (
 	"errors"
-	jsoniter "github.com/json-iterator/go"
+	"time"
+
 	"github.com/tobycroft/Calc"
 	Net "github.com/tobycroft/TuuzNet"
-	"time"
 )
 
 type Live struct {
@@ -34,36 +34,34 @@ type LiveStructCreateAll struct {
 }
 
 // CreateAll 创建房间并返回推流码和hls信息 Title 直播间地址（英文数字8位内）
-func (self *Live) CreateAll(title any) (LiveStructCreateAll, error) {
+func (self *Live) CreateAll(title any) (all LiveStructCreateAll, err error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"title": title,
 		"ts":    ts,
 		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/live/room/create_all", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/live/room/create_all", map[string]interface{}{
 		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var resp ret_std
+
+	err = rets.RetJson(&resp)
 	if err != nil {
-		return LiveStructCreateAll{}, err
-	} else {
-		var resp ret_std
-		err = jsoniter.UnmarshalFromString(ret, &resp)
-		if err != nil {
-			return LiveStructCreateAll{}, errors.New(ret)
-		}
-		if resp.Code == 0 {
-			var dat liveStructCreateAll
-			err = jsoniter.UnmarshalFromString(ret, &dat)
-			if err != nil {
-				return LiveStructCreateAll{}, errors.New(ret)
-			}
-			return dat.Data, nil
-		} else {
-			return LiveStructCreateAll{}, errors.New(resp.Echo)
-		}
+		return
 	}
+	if resp.Code == 0 {
+		var dat liveStructCreateAll
+		err = rets.RetJson(&dat)
+		if err != nil {
+			return
+		}
+		return dat.Data, nil
+	} else {
+		err = errors.New(resp.Echo)
+	}
+	return
 }
 
 type liveStructCreateRoom struct {
@@ -83,35 +81,31 @@ type LiveStructCreateRoom struct {
 }
 
 // CreateRoom 创建房间并返回推流码信息 Title 直播间地址（英文数字8位内）
-func (self *Live) CreateRoom(title any) (LiveStructCreateRoom, error) {
+func (self *Live) CreateRoom(title any) (room LiveStructCreateRoom, err error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"title": title,
 		"ts":    ts,
 		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/live/room/create", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/live/room/create", map[string]interface{}{
 		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var resp ret_std
+	err = rets.RetJson(&resp)
 	if err != nil {
-		return LiveStructCreateRoom{}, err
-	} else {
-		var resp ret_std
-		err = jsoniter.UnmarshalFromString(ret, &resp)
+		return
+	}
+	if resp.Code == 0 {
+		var dat liveStructCreateRoom
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return LiveStructCreateRoom{}, errors.New(ret)
+			return
 		}
-		if resp.Code == 0 {
-			var dat liveStructCreateRoom
-			err = jsoniter.UnmarshalFromString(ret, &dat)
-			if err != nil {
-				return LiveStructCreateRoom{}, errors.New(ret)
-			}
-			return dat.Data, nil
-		} else {
-			return LiveStructCreateRoom{}, errors.New(resp.Echo)
-		}
+		return dat.Data, nil
+	} else {
+		return LiveStructCreateRoom{}, errors.New(resp.Echo)
 	}
 }
 
@@ -129,34 +123,30 @@ type LiveStructPlayUrl struct {
 }
 
 // CreateRoom 返回hls信息 Title 直播间地址（英文数字8位内）
-func (self *Live) GetPlayUrl(title any) (LiveStructPlayUrl, error) {
+func (self *Live) GetPlayUrl(title any) (url LiveStructPlayUrl, err error) {
 	ts := time.Now().Unix()
 	param := map[string]any{
 		"title": title,
 		"ts":    ts,
 		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
-	ret, err := Net.Post(baseUrls+"/v1/live/room/play_url", map[string]interface{}{
+	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/live/room/play_url", map[string]interface{}{
 		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
+	var resp ret_std
+	err = rets.RetJson(&resp)
 	if err != nil {
-		return LiveStructPlayUrl{}, err
-	} else {
-		var resp ret_std
-		err = jsoniter.UnmarshalFromString(ret, &resp)
+		return
+	}
+	if resp.Code == 0 {
+		var dat liveStructPlayUrl
+		err = rets.RetJson(&dat)
 		if err != nil {
-			return LiveStructPlayUrl{}, errors.New(ret)
+			return
 		}
-		if resp.Code == 0 {
-			var dat liveStructPlayUrl
-			err = jsoniter.UnmarshalFromString(ret, &dat)
-			if err != nil {
-				return LiveStructPlayUrl{}, errors.New(ret)
-			}
-			return dat.Data, nil
-		} else {
-			return LiveStructPlayUrl{}, errors.New(resp.Echo)
-		}
+		return dat.Data, nil
+	} else {
+		return LiveStructPlayUrl{}, errors.New(resp.Echo)
 	}
 }

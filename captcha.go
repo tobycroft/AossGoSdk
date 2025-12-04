@@ -3,9 +3,9 @@ package AossGoSdk
 import (
 	"bytes"
 	"errors"
-	jsoniter "github.com/json-iterator/go"
-	Net "github.com/tobycroft/TuuzNet"
 	"image"
+
+	Net "github.com/tobycroft/TuuzNet"
 )
 
 type Captcha struct {
@@ -19,22 +19,17 @@ func (self *Captcha) Check(ident, code any) error {
 		"code":  code,
 		"token": self.Token,
 	}
-	ret, err := Net.Post(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	var rs ret_std
+	err := rets.RetJson(&rs)
 	if err != nil {
 		return err
+	}
+	//fmt.Println(rs)
+	if rs.Code == 0 {
+		return nil
 	} else {
-		var rs ret_std
-		errs := jsoniter.UnmarshalFromString(ret, &rs)
-		if errs != nil {
-			return errors.New(ret)
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return nil
-			} else {
-				return errors.New(rs.Echo)
-			}
-		}
+		return errors.New(rs.Echo)
 	}
 }
 
@@ -45,22 +40,16 @@ func (self *Captcha) CheckWithCode(ident, code any) (int64, error) {
 		"code":  code,
 		"token": self.Token,
 	}
-	ret, err := Net.Post(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	var rs ret_std
+	err := rets.RetJson(&rs)
 	if err != nil {
 		return 200, err
+	}
+	if rs.Code == 0 {
+		return rs.Code, nil
 	} else {
-		var rs ret_std
-		errs := jsoniter.UnmarshalFromString(ret, &rs)
-		if errs != nil {
-			return 500, errors.New(ret)
-		} else {
-			//fmt.Println(rs)
-			if rs.Code == 0 {
-				return rs.Code, nil
-			} else {
-				return rs.Code, errors.New(rs.Echo)
-			}
-		}
+		return rs.Code, errors.New(rs.Echo)
 	}
 }
 
@@ -69,11 +58,11 @@ func (self *Captcha) Math(ident any) (image.Image, error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := Net.Post(baseUrl+"/v1/captcha/text/math", nil, param, nil, nil)
+	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/math", nil, param, nil, nil).RetBytes()
 	if err != nil {
 		return nil, err
 	}
-	img, _, err := image.Decode(bytes.NewReader([]byte(ret)))
+	img, _, err := image.Decode(bytes.NewReader(ret))
 	return img, err
 }
 func (self *Captcha) Number(ident any) (image.Image, error) {
@@ -81,11 +70,11 @@ func (self *Captcha) Number(ident any) (image.Image, error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := Net.Post(baseUrl+"/v1/captcha/text/number", nil, param, nil, nil)
+	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/number", nil, param, nil, nil).RetBytes()
 	if err != nil {
 		return nil, err
 	}
-	img, _, err := image.Decode(bytes.NewReader([]byte(ret)))
+	img, _, err := image.Decode(bytes.NewReader(ret))
 	return img, err
 }
 func (self *Captcha) Chinese(ident any) (image.Image, error) {
@@ -93,11 +82,11 @@ func (self *Captcha) Chinese(ident any) (image.Image, error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := Net.Post(baseUrl+"/v1/captcha/text/chinese", nil, param, nil, nil)
+	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/chinese", nil, param, nil, nil).RetBytes()
 	if err != nil {
 		return nil, err
 	}
-	img, _, err := image.Decode(bytes.NewReader([]byte(ret)))
+	img, _, err := image.Decode(bytes.NewReader(ret))
 	return img, err
 }
 func (self *Captcha) Text(ident any) (image.Image, error) {
@@ -105,10 +94,10 @@ func (self *Captcha) Text(ident any) (image.Image, error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := Net.Post(baseUrl+"/v1/captcha/text/text", nil, param, nil, nil)
+	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/text", nil, param, nil, nil).RetBytes()
 	if err != nil {
 		return nil, err
 	}
-	img, _, err := image.Decode(bytes.NewReader([]byte(ret)))
+	img, _, err := image.Decode(bytes.NewReader(ret))
 	return img, err
 }

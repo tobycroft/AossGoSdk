@@ -2,7 +2,9 @@ package AossGoSdk
 
 import (
 	"errors"
-	jsoniter "github.com/json-iterator/go"
+
+	"github.com/bytedance/sonic"
+	"github.com/tobycroft/Calc"
 	Net "github.com/tobycroft/TuuzNet"
 )
 
@@ -58,26 +60,20 @@ func (self *Canvas) AddImage(Url string, X int64, Y int64) *Canvas {
 
 // Canvas_url:获取微信小程序二维码（302方法，推荐占用少）
 func (self *Canvas) Get_Url(project interface{}, width int64, height int64, background_color string) (string, error) {
-	data, err := jsoniter.MarshalToString(self.layer)
+	data, err := sonic.MarshalString(self.layer)
 	if err != nil {
 		return "", err
 	}
-	post := map[string]any{
-		"width":      width,
-		"height":     height,
+	post := map[string]string{
+		"width":      Calc.Any2String(width),
+		"height":     Calc.Any2String(height),
 		"background": background_color,
 		"data":       data,
 	}
-	ret, err := Net.Post(baseUrl+canvas_file, map[string]interface{}{
-		"token": project,
-	}, post, nil, nil)
-	if err != nil {
-		return "", err
-	}
 	var wwuf wechatStringData
-	err = jsoniter.UnmarshalFromString(ret, &wwuf)
-	if err != nil {
-		return "", err
+	err2 := new(Net.Post).PostFormData(baseUrl+canvas_file, map[string]interface{}{"token": project}, post, nil, nil).RetJson(&wwuf)
+	if err2 != nil {
+		return "", err2
 	}
 	if wwuf.Code == 0 {
 		return wwuf.Data, nil
