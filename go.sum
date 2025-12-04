@@ -28,8 +28,8 @@ github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOf
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/tobycroft/Calc v1.3.5 h1:b/xn6Bizt6pgC3mMiKgIpfQLLQE3SQMfxPN0j7fdjak=
 github.com/tobycroft/Calc v1.3.5/go.mod h1:Rtbth5rVSBICUCh2tH0tQwB1x2SHzhtkyB1FndlETEA=
-github.com/tobycroft/TuuzNet v1.8.1 h1:KkxFu6LgFPBJ7L+JCWO6qXvZJSgpdbwR+tlp6c4v5pI=
-github.com/tobycroft/TuuzNet v1.8.1/go.mod h1:zumDxOjf/5p/zZcGYpZSrHsbjxmi/UiOllmTHnBNjgg=
+github.com/tobycroft/TuuzNet v1.8.2 h1:wINwYRhdFEXl4UBOxXO2uRsKODF3ol74zmLx+yF0izU=
+github.com/tobycroft/TuuzNet v1.8.2/go.mod h1:jpefqIxLCV1tzZMF5FPIAkA719c9Lc8X7OvYR9QkCww=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 golang.org/x/arch v0.23.0 h1:lKF64A2jF6Zd8L0knGltUnegD62JMFBiCPBmQpToHhg=
