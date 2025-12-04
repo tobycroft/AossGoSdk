@@ -53,51 +53,117 @@ func (self *Captcha) CheckWithCode(ident, code any) (int64, error) {
 	}
 }
 
-func (self *Captcha) Math(ident any) (image.Image, error) {
+func (self *Captcha) Math(ident any) (img image.Image, err error) {
 	param := map[string]any{
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/math", nil, param, nil, nil).RetBytes()
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/math", nil, param, nil, nil)
+	var ret []byte
+	ret, err = rets.RetBytes()
 	if err != nil {
-		return nil, err
+		return
 	}
-	img, _, err := image.Decode(bytes.NewReader(ret))
+	img, _, err = image.Decode(bytes.NewReader(ret))
+	if err != nil {
+		var rs ret_std
+		err = rets.RetJson(&rs)
+		if err != nil {
+			return
+		}
+		//fmt.Println(rs)
+		if rs.Code == 0 {
+			return
+		} else {
+			err = errors.New(rs.Echo)
+			return
+		}
+	}
 	return img, err
 }
-func (self *Captcha) Number(ident any) (image.Image, error) {
+func (self *Captcha) Number(ident any) (img image.Image, err error) {
 	param := map[string]any{
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/number", nil, param, nil, nil).RetBytes()
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/number", nil, param, nil, nil)
+	var ret []byte
+	ret, err = rets.RetBytes()
 	if err != nil {
-		return nil, err
+		return
 	}
-	img, _, err := image.Decode(bytes.NewReader(ret))
+	img, _, err = image.Decode(bytes.NewReader(ret))
+	if err != nil {
+		var rs ret_std
+		err = rets.RetJson(&rs)
+		if err != nil {
+			return
+		}
+		//fmt.Println(rs)
+		if rs.Code == 0 {
+			return
+		} else {
+			err = errors.New(rs.Echo)
+			return
+		}
+	}
 	return img, err
 }
-func (self *Captcha) Chinese(ident any) (image.Image, error) {
+
+func (self *Captcha) Chinese(ident any) (img image.Image, err error) {
 	param := map[string]any{
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/chinese", nil, param, nil, nil).RetBytes()
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/chinese", nil, param, nil, nil)
+	var ret []byte
+	ret, err = rets.RetBytes()
 	if err != nil {
-		return nil, err
+		return
 	}
-	img, _, err := image.Decode(bytes.NewReader(ret))
+	img, _, err = image.Decode(bytes.NewReader(ret))
+	if err != nil {
+		var rs ret_std
+		err = rets.RetJson(&rs)
+		if err != nil {
+			return
+		}
+		//fmt.Println(rs)
+		if rs.Code == 0 {
+			return
+		} else {
+			err = errors.New(rs.Echo)
+			return
+		}
+	}
 	return img, err
 }
-func (self *Captcha) Text(ident any) (image.Image, error) {
+
+func (self *Captcha) Text(ident any) (img image.Image, err error) {
 	param := map[string]any{
 		"ident": ident,
 		"token": self.Token,
 	}
-	ret, err := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/text", nil, param, nil, nil).RetBytes()
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/text", nil, param, nil, nil)
+	var ret []byte
+	ret, err = rets.RetBytes()
 	if err != nil {
-		return nil, err
+		return
 	}
-	img, _, err := image.Decode(bytes.NewReader(ret))
+	img, _, err = image.Decode(bytes.NewReader(ret))
+	if err != nil {
+		var rs ret_std
+		err = rets.RetJson(&rs)
+		if err != nil {
+			return
+		}
+		//fmt.Println(rs)
+		if rs.Code == 0 {
+			return
+		} else {
+			err = errors.New(rs.Echo)
+			return
+		}
+	}
 	return img, err
 }
