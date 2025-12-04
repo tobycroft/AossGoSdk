@@ -41,7 +41,7 @@ func (self *Captcha) CheckInTime(ident, code any, validtime_in_second int) error
 		"second": validtime_in_second,
 		"token":  self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/auth/check_in_time", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
