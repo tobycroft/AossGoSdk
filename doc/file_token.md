@@ -20,8 +20,9 @@ import AossGoSdk "github.com/tobycroft/AossGoSdk"
 
 ```go
 type FileToken struct {
-    Appid string
-    Token string
+    Appid     string
+    Token     string
+    RemoteUrl string
 }
 ```
 
@@ -29,6 +30,7 @@ type FileToken struct {
 |------|------|------|
 | Appid | string | 项目 AppID |
 | Token | string | 项目 Open Token（后端密钥，不可暴露给前端） |
+| RemoteUrl | string | 可选，自定义远程地址，不填则使用默认地址 |
 
 ---
 

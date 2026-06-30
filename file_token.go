@@ -9,14 +9,15 @@ import (
 )
 
 type FileToken struct {
-	Appid string
-	Token string
+	Appid     string
+	Token     string
+	RemoteUrl string
 }
 
 type fileTokenCreateRet struct {
-	Code int64            `json:"code"`
-	Data FileTokenData    `json:"data"`
-	Echo string           `json:"echo"`
+	Code int64         `json:"code"`
+	Data FileTokenData `json:"data"`
+	Echo string        `json:"echo"`
 }
 
 type FileTokenData struct {
@@ -34,7 +35,12 @@ func (self *FileToken) GetUploadToken() (FileTokenData, error) {
 		"sign":      sign,
 	}
 
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v2/file/token/create", nil, param, nil, nil)
+	remoteUrl := baseUrls
+	if self.RemoteUrl != "" {
+		remoteUrl = self.RemoteUrl
+	}
+
+	rets := new(Net.Post).PostFormDataAny(remoteUrl+"/v2/file/token/create", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
