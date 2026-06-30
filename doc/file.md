@@ -64,13 +64,19 @@ func (self *File) GetUploadUrl() (FileUrlData, error)
 
 ```go
 type FileUrlData struct {
+    Token     string `json:"token"`
+    ExpiredAt string `json:"expired_at"`
+    Url       string `json:"url"`
     UploadUrl string `json:"upload_url"`
 }
 ```
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| UploadUrl | string | 完整上传地址 |
+| Token | string | 临时上传 Token |
+| ExpiredAt | string | 过期时间 |
+| Url | string | 上传地址（不带 querystring） |
+| UploadUrl | string | 完整上传地址（含 querystring token） |
 
 ```go
 func (self *File) GetUploadHashUrl() (FileUrlData, error)
@@ -157,7 +163,9 @@ ft := &AossGoSdk.File{
 }
 urlData, err := ft.GetUploadUrl()
 if err == nil {
-    fmt.Println(urlData.UploadUrl) // https://upload.tuuz.cc:433/v2/file/index/upfull
+    fmt.Println(urlData.Token)     // 临时 token
+    fmt.Println(urlData.ExpiredAt) // 过期时间
+    fmt.Println(urlData.UploadUrl) // https://upload.tuuz.cc:433/v2/file/index/upfull?token=xxx
 }
 ```
 
@@ -168,9 +176,10 @@ ft := &AossGoSdk.File{
     Token: "your-oss-token",
 }
 
-// 1. 获取 Hash 上传地址
+// 1. 获取 Hash 上传地址（含 token）
 urlData, _ := ft.GetUploadHashUrl()
-fmt.Println(urlData.UploadUrl) // https://upload.tuuz.cc:433/v2/file/index/uphash
+fmt.Println(urlData.Token)     // 临时 token
+fmt.Println(urlData.UploadUrl) // https://upload.tuuz.cc:433/v2/file/index/uphash?token=xxx
 
 // 2. 客户端上传后获得 MD5 哈希
 // 3. 通过哈希查询完整文件信息

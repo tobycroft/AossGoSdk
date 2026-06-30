@@ -31,6 +31,9 @@ type fileUrlRet struct {
 }
 
 type FileUrlData struct {
+	Token     string `json:"token"`
+	ExpiredAt string `json:"expired_at"`
+	Url       string `json:"url"`
 	UploadUrl string `json:"upload_url"`
 }
 
