@@ -10,13 +10,15 @@ v2 版本文件上传采用临时 Token 机制，避免固定 Token 暴露给前
 3. 客户端使用临时 Token 直传文件至 `/v2/file/index/upfull?token=<临时Token>`
 4. 上传完成后，临时 Token 立即失效
 
-## 包导入
+## Go SDK
+
+### 包导入
 
 ```go
 import AossGoSdk "github.com/tobycroft/AossGoSdk"
 ```
 
-## 结构体
+### 结构体
 
 ```go
 type File struct {
@@ -32,15 +34,13 @@ type File struct {
 | Token | string | 项目 Open Token（后端密钥，不可暴露给前端） |
 | RemoteUrl | string | 可选，自定义远程地址，不填则使用默认地址 |
 
----
-
-## GetUploadToken
-
-获取临时上传 Token。
+### 方法
 
 ```go
 func (self *File) GetUploadToken() (FileData, error)
 ```
+
+获取临时上传 Token。
 
 **返回值 `FileData`：**
 
@@ -56,11 +56,7 @@ type FileData struct {
 | Token | string | 临时上传 Token |
 | ExpiredAt | string | 过期时间 |
 
----
-
-## 使用示例
-
-### Go 后端获取临时 Token
+### 使用示例
 
 ```go
 package main
@@ -84,13 +80,98 @@ func getUploadToken(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // 将临时 token 返回给前端
     w.Header().Set("Content-Type", "application/json")
     fmt.Fprintf(w, `{"token":"%s","expired_at":"%s"}`, data.Token, data.ExpiredAt)
 }
 ```
 
-### 前端使用临时 Token 上传
+### 自定义地址
+
+```go
+ft := &AossGoSdk.File{
+    Appid:     "your-appid",
+    Token:     "your-open-token",
+    RemoteUrl: "https://custom.example.com:444",
+}
+data, err := ft.GetUploadToken()
+```
+
+---
+
+## PHP SDK
+
+### 包导入
+
+```php
+use Tobycroft\AossSdk\File;
+```
+
+### 构造方法
+
+```php
+public function __construct(string $appid, string $token, string $remote_url = '')
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| appid | string | 项目 AppID |
+| token | string | 项目 Open Token（后端密钥，不可暴露给前端） |
+| remote_url | string | 可选，自定义远程地址，不填则使用默认地址 |
+
+### 方法
+
+```php
+public function setRemoteUrl(string $remote_url): self
+```
+
+动态修改远程地址，支持链式调用。
+
+```php
+public function getUploadToken(): FileRet
+```
+
+获取临时上传 Token。
+
+**返回值 `FileRet`：**
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| token | string | 临时上传 Token |
+| expired_at | string | 过期时间 |
+| error | mixed | 错误信息，成功时为 null |
+| isSuccess() | bool | 是否成功 |
+| getError() | mixed | 获取错误信息 |
+
+### 使用示例
+
+```php
+$file = new \Tobycroft\AossSdk\File('your-appid', 'your-open-token');
+$ret = $file->getUploadToken();
+
+if ($ret->isSuccess()) {
+    echo $ret->token;       // 临时 token
+    echo $ret->expired_at;  // 过期时间
+} else {
+    echo $ret->getError();
+}
+```
+
+### 自定义地址
+
+```php
+// 方式一：构造函数传入
+$file = new \Tobycroft\AossSdk\File('appid', 'token', 'https://custom.example.com:444');
+
+// 方式二：链式调用
+$file = (new \Tobycroft\AossSdk\File('appid', 'token'))
+    ->setRemoteUrl('https://custom.example.com:444');
+
+$ret = $file->getUploadToken();
+```
+
+---
+
+## 前端使用临时 Token 上传
 
 ```javascript
 // 1. 从后端获取临时 token
@@ -126,7 +207,7 @@ sign = MD5(Appid + Token + timestamp)
 
 ---
 
-## 完整流程示例
+## 完整流程示例（Go）
 
 ```go
 package main
@@ -144,7 +225,6 @@ var ft = &AossGoSdk.File{
     Token: "your-open-token",
 }
 
-// 后端接口：前端请求获取临时上传 token
 func uploadTokenHandler(w http.ResponseWriter, r *http.Request) {
     data, err := ft.GetUploadToken()
     if err != nil {
