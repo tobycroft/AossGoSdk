@@ -19,7 +19,7 @@ import AossGoSdk "github.com/tobycroft/AossGoSdk"
 ## 结构体
 
 ```go
-type FileToken struct {
+type File struct {
     Appid     string
     Token     string
     RemoteUrl string
@@ -39,13 +39,13 @@ type FileToken struct {
 获取临时上传 Token。
 
 ```go
-func (self *FileToken) GetUploadToken() (FileTokenData, error)
+func (self *File) GetUploadToken() (FileData, error)
 ```
 
-**返回值 `FileTokenData`：**
+**返回值 `FileData`：**
 
 ```go
-type FileTokenData struct {
+type FileData struct {
     Token     string `json:"token"`
     ExpiredAt string `json:"expired_at"`
 }
@@ -73,7 +73,7 @@ import (
 )
 
 func getUploadToken(w http.ResponseWriter, r *http.Request) {
-    ft := &AossGoSdk.FileToken{
+    ft := &AossGoSdk.File{
         Appid: "your-appid",
         Token: "your-open-token",
     }
@@ -139,7 +139,7 @@ import (
     AossGoSdk "github.com/tobycroft/AossGoSdk"
 )
 
-var ft = &AossGoSdk.FileToken{
+var ft = &AossGoSdk.File{
     Appid: "your-appid",
     Token: "your-open-token",
 }

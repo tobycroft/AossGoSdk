@@ -8,24 +8,24 @@ import (
 	Net "github.com/tobycroft/TuuzNet"
 )
 
-type FileToken struct {
+type File struct {
 	Appid     string
 	Token     string
 	RemoteUrl string
 }
 
-type fileTokenCreateRet struct {
-	Code int64         `json:"code"`
-	Data FileTokenData `json:"data"`
-	Echo string        `json:"echo"`
+type fileCreateRet struct {
+	Code int64    `json:"code"`
+	Data FileData `json:"data"`
+	Echo string   `json:"echo"`
 }
 
-type FileTokenData struct {
+type FileData struct {
 	Token     string `json:"token"`
 	ExpiredAt string `json:"expired_at"`
 }
 
-func (self *FileToken) GetUploadToken() (FileTokenData, error) {
+func (self *File) GetUploadToken() (FileData, error) {
 	ts := time.Now().Unix()
 	sign := Calc.Md5(self.Appid + self.Token + Calc.Any2String(ts))
 
@@ -44,15 +44,15 @@ func (self *FileToken) GetUploadToken() (FileTokenData, error) {
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
-		return FileTokenData{}, err
+		return FileData{}, err
 	}
 	if rs.Code == 0 {
-		var dat fileTokenCreateRet
+		var dat fileCreateRet
 		err = rets.RetJson(&dat)
 		if err != nil {
-			return FileTokenData{}, err
+			return FileData{}, err
 		}
 		return dat.Data, nil
 	}
-	return FileTokenData{}, errors.New(rs.Echo)
+	return FileData{}, errors.New(rs.Echo)
 }
