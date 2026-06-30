@@ -122,7 +122,7 @@ type fileHashRet struct {
 	Echo string       `json:"echo"`
 }
 
-func (self *File) GetUploadUrlHash() (FileUrlData, error) {
+func (self *File) GetUploadHashUrl() (FileUrlData, error) {
 	ts := time.Now().Unix()
 	sign := Calc.Md5(self.Token + Calc.Any2String(ts))
 
@@ -154,7 +154,7 @@ func (self *File) GetUploadUrlHash() (FileUrlData, error) {
 	return FileUrlData{}, errors.New(rs.Echo)
 }
 
-func (self *File) QueryByHash(hash string) (FileHashData, error) {
+func (self *File) GetUploadedFileUrlByHash(hash string) (FileHashData, error) {
 	ts := time.Now().Unix()
 	sign := Calc.Md5(self.Token + Calc.Any2String(ts))
 

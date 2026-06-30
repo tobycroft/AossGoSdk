@@ -73,13 +73,13 @@ type FileUrlData struct {
 | UploadUrl | string | 完整上传地址 |
 
 ```go
-func (self *File) GetUploadUrlHash() (FileUrlData, error)
+func (self *File) GetUploadHashUrl() (FileUrlData, error)
 ```
 
 从 AOSSTP8 获取 Hash 模式上传地址（上传后仅返回文件 MD5 哈希）。
 
 ```go
-func (self *File) QueryByHash(hash string) (FileHashData, error)
+func (self *File) GetUploadedFileUrlByHash(hash string) (FileHashData, error)
 ```
 
 通过文件 MD5 哈希查询完整文件信息。
@@ -169,12 +169,12 @@ ft := &AossGoSdk.File{
 }
 
 // 1. 获取 Hash 上传地址
-urlData, _ := ft.GetUploadUrlHash()
+urlData, _ := ft.GetUploadHashUrl()
 fmt.Println(urlData.UploadUrl) // https://upload.tuuz.cc:433/v2/file/index/uphash
 
 // 2. 客户端上传后获得 MD5 哈希
 // 3. 通过哈希查询完整文件信息
-hashData, err := ft.QueryByHash("abc123def456...")
+hashData, err := ft.GetUploadedFileUrlByHash("abc123def456...")
 if err == nil {
     fmt.Println(hashData.Url)  // 完整文件 URL
     fmt.Println(hashData.Size) // 文件大小
@@ -380,7 +380,7 @@ func uploadTokenHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     urlData, _ := ft.GetUploadUrl()
-    hashUrlData, _ := ft.GetUploadUrlHash()
+    hashUrlData, _ := ft.GetUploadHashUrl()
 
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(map[string]interface{}{
@@ -399,7 +399,7 @@ func main() {
 
     http.HandleFunc("/api/upload/query-hash", func(w http.ResponseWriter, r *http.Request) {
         hash := r.FormValue("hash")
-        hashData, err := ft.QueryByHash(hash)
+        hashData, err := ft.GetUploadedFileUrlByHash(hash)
         w.Header().Set("Content-Type", "application/json")
         if err != nil {
             json.NewEncoder(w).Encode(map[string]interface{}{
