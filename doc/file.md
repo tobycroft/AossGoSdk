@@ -22,7 +22,6 @@ import AossGoSdk "github.com/tobycroft/AossGoSdk"
 
 ```go
 type File struct {
-    Appid     string
     Token     string
     RemoteUrl string
 }
@@ -30,8 +29,7 @@ type File struct {
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| Appid | string | 项目 AppID |
-| Token | string | 项目 Open Token（后端密钥，不可暴露给前端） |
+| Token | string | OSS Token（后端密钥，不可暴露给前端） |
 | RemoteUrl | string | 可选，自定义远程地址，不填则使用默认地址 |
 
 ### 方法
@@ -56,6 +54,24 @@ type FileData struct {
 | Token | string | 临时上传 Token |
 | ExpiredAt | string | 过期时间 |
 
+```go
+func (self *File) GetUploadUrl() (FileUrlData, error)
+```
+
+从 AOSSTP8 获取完整的上传地址。
+
+**返回值 `FileUrlData`：**
+
+```go
+type FileUrlData struct {
+    UploadUrl string `json:"upload_url"`
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| UploadUrl | string | 完整上传地址 |
+
 ### 使用示例
 
 ```go
@@ -70,8 +86,7 @@ import (
 
 func getUploadToken(w http.ResponseWriter, r *http.Request) {
     ft := &AossGoSdk.File{
-        Appid: "your-appid",
-        Token: "your-open-token",
+        Token: "your-oss-token",
     }
 
     data, err := ft.GetUploadToken()
@@ -85,12 +100,23 @@ func getUploadToken(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
+### 获取上传地址
+
+```go
+ft := &AossGoSdk.File{
+    Token: "your-oss-token",
+}
+urlData, err := ft.GetUploadUrl()
+if err == nil {
+    fmt.Println(urlData.UploadUrl) // https://upload.tuuz.cc:433/v2/file/index/upfull
+}
+```
+
 ### 自定义地址
 
 ```go
 ft := &AossGoSdk.File{
-    Appid:     "your-appid",
-    Token:     "your-open-token",
+    Token:     "your-oss-token",
     RemoteUrl: "https://custom.example.com:444",
 }
 data, err := ft.GetUploadToken()
@@ -109,13 +135,12 @@ use Tobycroft\AossSdk\File;
 ### 构造方法
 
 ```php
-public function __construct(string $appid, string $token, string $remote_url = '')
+public function __construct(string $token, string $remote_url = '')
 ```
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
-| appid | string | 项目 AppID |
-| token | string | 项目 Open Token（后端密钥，不可暴露给前端） |
+| token | string | OSS Token（后端密钥，不可暴露给前端） |
 | remote_url | string | 可选，自定义远程地址，不填则使用默认地址 |
 
 ### 方法
@@ -142,10 +167,25 @@ public function getUploadToken(): FileRet
 | isSuccess() | bool | 是否成功 |
 | getError() | mixed | 获取错误信息 |
 
+```php
+public function getUploadUrl(): FileUrlRet
+```
+
+从 AOSSTP8 获取完整的上传地址。
+
+**返回值 `FileUrlRet`：**
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| upload_url | string | 完整上传地址 |
+| error | mixed | 错误信息，成功时为 null |
+| isSuccess() | bool | 是否成功 |
+| getError() | mixed | 获取错误信息 |
+
 ### 使用示例
 
 ```php
-$file = new \Tobycroft\AossSdk\File('your-appid', 'your-open-token');
+$file = new \Tobycroft\AossSdk\File('your-oss-token');
 $ret = $file->getUploadToken();
 
 if ($ret->isSuccess()) {
@@ -156,14 +196,25 @@ if ($ret->isSuccess()) {
 }
 ```
 
+### 获取上传地址
+
+```php
+$file = new \Tobycroft\AossSdk\File('your-oss-token');
+$ret = $file->getUploadUrl();
+
+if ($ret->isSuccess()) {
+    echo $ret->upload_url; // https://upload.tuuz.cc:433/v2/file/index/upfull
+}
+```
+
 ### 自定义地址
 
 ```php
 // 方式一：构造函数传入
-$file = new \Tobycroft\AossSdk\File('appid', 'token', 'https://custom.example.com:444');
+$file = new \Tobycroft\AossSdk\File('your-oss-token', 'https://custom.example.com:444');
 
 // 方式二：链式调用
-$file = (new \Tobycroft\AossSdk\File('appid', 'token'))
+$file = (new \Tobycroft\AossSdk\File('your-oss-token'))
     ->setRemoteUrl('https://custom.example.com:444');
 
 $ret = $file->getUploadToken();
@@ -183,7 +234,7 @@ const formData = new FormData();
 formData.append('file', fileInput.files[0]);
 
 const uploadResp = await fetch(
-    `https://upload.tuuz.cc:444/v2/file/index/upfull?token=${token}`,
+    `https://upload.tuuz.cc:433/v2/file/index/upfull?token=${token}`,
     { method: 'POST', body: formData }
 );
 
@@ -198,7 +249,7 @@ console.log('上传结果:', result.data);
 SDK 内部自动生成签名：
 
 ```
-sign = MD5(Appid + Token + timestamp)
+sign = MD5(Token + timestamp)
 ```
 
 - `timestamp` 为 Unix 时间戳
@@ -221,8 +272,7 @@ import (
 )
 
 var ft = &AossGoSdk.File{
-    Appid: "your-appid",
-    Token: "your-open-token",
+    Token: "your-oss-token",
 }
 
 func uploadTokenHandler(w http.ResponseWriter, r *http.Request) {
@@ -236,13 +286,15 @@ func uploadTokenHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    urlData, _ := ft.GetUploadUrl()
+
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(map[string]interface{}{
         "code": 0,
         "data": map[string]string{
             "token":      data.Token,
             "expired_at": data.ExpiredAt,
-            "upload_url": "https://upload.tuuz.cc:444/v2/file/index/upfull",
+            "upload_url": urlData.UploadUrl,
         },
     })
 }

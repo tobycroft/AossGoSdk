@@ -9,7 +9,6 @@ import (
 )
 
 type File struct {
-	Appid     string
 	Token     string
 	RemoteUrl string
 }
@@ -37,10 +36,10 @@ type FileUrlData struct {
 
 func (self *File) GetUploadToken() (FileData, error) {
 	ts := time.Now().Unix()
-	sign := Calc.Md5(self.Appid + self.Token + Calc.Any2String(ts))
+	sign := Calc.Md5(self.Token + Calc.Any2String(ts))
 
 	param := map[string]any{
-		"appid":     self.Appid,
+		"token":     self.Token,
 		"timestamp": Calc.Any2String(ts),
 		"sign":      sign,
 	}
@@ -69,10 +68,10 @@ func (self *File) GetUploadToken() (FileData, error) {
 
 func (self *File) GetUploadUrl() (FileUrlData, error) {
 	ts := time.Now().Unix()
-	sign := Calc.Md5(self.Appid + self.Token + Calc.Any2String(ts))
+	sign := Calc.Md5(self.Token + Calc.Any2String(ts))
 
 	param := map[string]any{
-		"appid":     self.Appid,
+		"token":     self.Token,
 		"timestamp": Calc.Any2String(ts),
 		"sign":      sign,
 	}
