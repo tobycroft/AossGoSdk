@@ -189,3 +189,43 @@ func (self *Captcha) Text(ident any) (img image.Image, err error) {
 	}
 	return img, err
 }
+
+func (self *Captcha) GifText(ident any) (gif []byte, err error) {
+	return self.getGif("/v1/captcha/gif/text", ident)
+}
+
+func (self *Captcha) GifFast(ident any) (gif []byte, err error) {
+	return self.getGif("/v1/captcha/gif/fast", ident)
+}
+
+func (self *Captcha) GifNumber(ident any) (gif []byte, err error) {
+	return self.getGif("/v1/captcha/gif/number", ident)
+}
+
+func (self *Captcha) GifNumberFast(ident any) (gif []byte, err error) {
+	return self.getGif("/v1/captcha/gif/number_fast", ident)
+}
+
+func (self *Captcha) getGif(path string, ident any) ([]byte, error) {
+	param := map[string]any{
+		"ident": ident,
+		"token": self.Token,
+	}
+	rets := new(Net.Post).PostFormDataAny(baseUrl+path, nil, param, nil, nil)
+	ret, err := rets.RetBytes()
+	if err != nil {
+		return nil, err
+	}
+	if len(ret) > 2 && ret[0] == 0x47 && ret[1] == 0x49 {
+		return ret, nil
+	}
+	var rs ret_std
+	err = rets.RetJson(&rs)
+	if err != nil {
+		return nil, err
+	}
+	if rs.Code == 0 {
+		return ret, nil
+	}
+	return nil, errors.New(rs.Echo)
+}

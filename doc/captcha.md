@@ -25,6 +25,10 @@ type Captcha struct {
 | Number | 生成数字验证码图片 |
 | Chinese | 生成中文验证码图片 |
 | Text | 生成文本验证码图片 |
+| GifText | 生成动态 GIF 文本验证码（每秒一帧） |
+| GifFast | 生成动态 GIF 文本验证码（0.5秒一帧） |
+| GifNumber | 生成动态 GIF 数字验证码（每秒一帧） |
+| GifNumberFast | 生成动态 GIF 数字验证码（0.5秒一帧） |
 
 ---
 
@@ -220,5 +224,60 @@ func VerifyCaptcha(w http.ResponseWriter, r *http.Request) {
         return
     }
     fmt.Fprintf(w, "验证通过")
+}
+```
+
+---
+
+## 动态 GIF 验证码
+
+以下四个方法返回 `[]byte` 类型的 GIF 二进制数据，适合直接写入 HTTP 响应或保存为 `.gif` 文件。
+
+### GifText（字母+数字，1秒一帧）
+
+```go
+func (self *Captcha) GifText(ident any) (gif []byte, err error)
+```
+
+### GifFast（字母+数字，0.5秒一帧）
+
+```go
+func (self *Captcha) GifFast(ident any) (gif []byte, err error)
+```
+
+### GifNumber（纯数字，1秒一帧）
+
+```go
+func (self *Captcha) GifNumber(ident any) (gif []byte, err error)
+```
+
+### GifNumberFast（纯数字，0.5秒一帧）
+
+```go
+func (self *Captcha) GifNumberFast(ident any) (gif []byte, err error)
+```
+
+**使用示例：**
+
+```go
+package main
+
+import (
+    "net/http"
+
+    AossGoSdk "github.com/tobycroft/AossGoSdk"
+)
+
+func gifCaptchaHandler(w http.ResponseWriter, r *http.Request) {
+    captcha := &AossGoSdk.Captcha{Token: "your-project-token"}
+
+    gif, err := captcha.GifNumberFast("user_session_id")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "image/gif")
+    w.Write(gif)
 }
 ```
