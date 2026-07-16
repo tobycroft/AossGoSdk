@@ -206,6 +206,14 @@ func (self *Captcha) GifNumberFast(ident any) (gif []byte, err error) {
 	return self.getGif("/v1/captcha/gif/number_fast", ident)
 }
 
+func (self *Captcha) GifLetters(ident any) (gif []byte, err error) {
+	return self.getGif("/v1/captcha/gif/letters", ident)
+}
+
+func (self *Captcha) GifLettersFast(ident any) (gif []byte, err error) {
+	return self.getGif("/v1/captcha/gif/letters_fast", ident)
+}
+
 func (self *Captcha) getGif(path string, ident any) ([]byte, error) {
 	param := map[string]any{
 		"ident": ident,

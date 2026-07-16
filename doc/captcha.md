@@ -29,6 +29,8 @@ type Captcha struct {
 | GifFast | 生成动态 GIF 文本验证码（0.5秒一帧） |
 | GifNumber | 生成动态 GIF 数字验证码（每秒一帧） |
 | GifNumberFast | 生成动态 GIF 数字验证码（0.5秒一帧） |
+| GifLetters | 生成动态 GIF 纯字母验证码（每秒一帧） |
+| GifLettersFast | 生成动态 GIF 纯字母验证码（0.5秒一帧） |
 
 ---
 
@@ -255,6 +257,18 @@ func (self *Captcha) GifNumber(ident any) (gif []byte, err error)
 
 ```go
 func (self *Captcha) GifNumberFast(ident any) (gif []byte, err error)
+```
+
+### GifLetters（纯字母，1秒一帧）
+
+```go
+func (self *Captcha) GifLetters(ident any) (gif []byte, err error)
+```
+
+### GifLettersFast（纯字母，0.5秒一帧）
+
+```go
+func (self *Captcha) GifLettersFast(ident any) (gif []byte, err error)
 ```
 
 **使用示例：**
