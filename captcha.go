@@ -237,3 +237,78 @@ func (self *Captcha) getGif(path string, ident any) ([]byte, error) {
 	}
 	return nil, errors.New(rs.Echo)
 }
+
+type SlideCaptchaData struct {
+	Bg        string `json:"bg"`
+	Block     string `json:"block"`
+	Y         int    `json:"y"`
+	BgWidth   int    `json:"bg_width"`
+	BgHeight  int    `json:"bg_height"`
+	BlockSize int    `json:"block_size"`
+}
+
+type slideRet struct {
+	Code int64            `json:"code"`
+	Data SlideCaptchaData `json:"data"`
+	Echo string           `json:"echo"`
+}
+
+// Slide 生成滑动拼图验证码
+func (self *Captcha) Slide(ident any) (data SlideCaptchaData, err error) {
+	param := map[string]any{
+		"ident": ident,
+		"token": self.Token,
+	}
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/slide/create", nil, param, nil, nil)
+	var rs slideRet
+	err = rets.RetJson(&rs)
+	if err != nil {
+		return
+	}
+	if rs.Code == 0 {
+		return rs.Data, nil
+	} else {
+		err = errors.New(rs.Echo)
+		return
+	}
+}
+
+// SlideCheck 验证滑动拼图验证码
+func (self *Captcha) SlideCheck(ident any, x int) error {
+	param := map[string]any{
+		"ident": ident,
+		"x":     x,
+		"token": self.Token,
+	}
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/slide/check", nil, param, nil, nil)
+	var rs ret_std
+	err := rets.RetJson(&rs)
+	if err != nil {
+		return err
+	}
+	if rs.Code == 0 {
+		return nil
+	} else {
+		return errors.New(rs.Echo)
+	}
+}
+
+// SlideCheckWithCode 验证滑动拼图验证码，返回错误码
+func (self *Captcha) SlideCheckWithCode(ident any, x int) (int64, error) {
+	param := map[string]any{
+		"ident": ident,
+		"x":     x,
+		"token": self.Token,
+	}
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/slide/check", nil, param, nil, nil)
+	var rs ret_std
+	err := rets.RetJson(&rs)
+	if err != nil {
+		return 200, err
+	}
+	if rs.Code == 0 {
+		return rs.Code, nil
+	} else {
+		return rs.Code, errors.New(rs.Echo)
+	}
+}
