@@ -312,3 +312,58 @@ func (self *Captcha) SlideCheckWithCode(ident any, x int) (int64, error) {
 		return rs.Code, errors.New(rs.Echo)
 	}
 }
+
+type ClickCaptchaData struct {
+	Bg           string `json:"bg"`
+	Tip          string `json:"tip"`
+	TargetsCount int    `json:"targets_count"`
+	BgWidth      int    `json:"bg_width"`
+	BgHeight     int    `json:"bg_height"`
+}
+
+type clickRet struct {
+	Code int64            `json:"code"`
+	Data ClickCaptchaData `json:"data"`
+	Echo string           `json:"echo"`
+}
+
+// Click 生成点击验证码
+func (self *Captcha) Click(ident any) (data ClickCaptchaData, err error) {
+	param := map[string]any{
+		"ident": ident,
+		"token": self.Token,
+	}
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/click/create", nil, param, nil, nil)
+	var rs clickRet
+	err = rets.RetJson(&rs)
+	if err != nil {
+		return
+	}
+	if rs.Code == 0 {
+		return rs.Data, nil
+	} else {
+		err = errors.New(rs.Echo)
+		return
+	}
+}
+
+// ClickCheck 验证点击验证码
+// clicks 为前端用户点击坐标 JSON 字符串，格式: [{"x":100,"y":80}, {"x":200,"y":120}]
+func (self *Captcha) ClickCheck(ident any, clicks string) error {
+	param := map[string]any{
+		"ident":  ident,
+		"clicks": clicks,
+		"token":  self.Token,
+	}
+	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/click/check", nil, param, nil, nil)
+	var rs ret_std
+	err := rets.RetJson(&rs)
+	if err != nil {
+		return err
+	}
+	if rs.Code == 0 {
+		return nil
+	} else {
+		return errors.New(rs.Echo)
+	}
+}
