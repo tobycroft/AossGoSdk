@@ -11,6 +11,12 @@ import (
 type File struct {
 	Token     string
 	RemoteUrl string
+	Ip        string
+}
+
+func (self *File) SetIp(ip string) *File {
+	self.Ip = ip
+	return self
 }
 
 type fileCreateRet struct {
@@ -46,6 +52,9 @@ func (self *File) GetUploadToken() (FileData, error) {
 		"timestamp": Calc.Any2String(ts),
 		"sign":      sign,
 	}
+	if self.Ip != "" {
+		param["ip"] = self.Ip
+	}
 
 	remoteUrl := baseUrls
 	if self.RemoteUrl != "" {
@@ -77,6 +86,9 @@ func (self *File) GetUploadUrl() (FileUrlData, error) {
 		"token":     self.Token,
 		"timestamp": Calc.Any2String(ts),
 		"sign":      sign,
+	}
+	if self.Ip != "" {
+		param["ip"] = self.Ip
 	}
 
 	remoteUrl := baseUrls
@@ -133,6 +145,9 @@ func (self *File) GetUploadHashUrl() (FileUrlData, error) {
 		"token":     self.Token,
 		"timestamp": Calc.Any2String(ts),
 		"sign":      sign,
+	}
+	if self.Ip != "" {
+		param["ip"] = self.Ip
 	}
 
 	remoteUrl := baseUrls
