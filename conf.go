@@ -1,6 +1,6 @@
 package AossGoSdk
 
-var baseUrl = "http://upload.tuuz.cc:81"
+var baseUrl = "https://upload.tuuz.cc:433"
 var baseUrls = "https://upload.tuuz.cc:433"
 
 func Wechat_conf_set(BaseUrl, BaseUrls, CDNUrl, CDNUrls string) {

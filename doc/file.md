@@ -195,7 +195,7 @@ if err == nil {
 ```go
 ft := &AossGoSdk.File{
     Token:     "your-oss-token",
-    RemoteUrl: "https://custom.example.com:444",
+    RemoteUrl: "https://custom.example.com:433",
 }
 data, err := ft.GetUploadToken()
 ```
@@ -289,11 +289,11 @@ if ($ret->isSuccess()) {
 
 ```php
 // 方式一：构造函数传入
-$file = new \Tobycroft\AossSdk\File('your-oss-token', 'https://custom.example.com:444');
+$file = new \Tobycroft\AossSdk\File('your-oss-token', 'https://custom.example.com:433');
 
 // 方式二：链式调用
 $file = (new \Tobycroft\AossSdk\File('your-oss-token'))
-    ->setRemoteUrl('https://custom.example.com:444');
+    ->setRemoteUrl('https://custom.example.com:433');
 
 $ret = $file->getUploadToken();
 ```
