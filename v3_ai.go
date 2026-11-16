@@ -18,12 +18,12 @@ import (
 // 结构化字段（messages/tools/input/thinking/image 等）按服务端约定以
 // JSON 字符串提交；响应统一为 {code,data,echo}，code=0 时 data 为上游原样响应。
 
-const v3DefaultBaseUrl = "https://aoss.tuuz.cc"
+const v3DefaultBaseUrl = "https://upload.tuuz.cc:433"
 
 // V3Ai V3 AI 客户端。零值可直接用，BaseUrl 为空时回退默认值。
 type V3Ai struct {
 	Secret  string // 服务端签发的 64 位十六进制凭证，同时作为信封密钥
-	BaseUrl string // AOSSTP8 站点根地址，如 https://aoss.tuuz.cc
+	BaseUrl string // V3 开放接口域名根，如 https://upload.tuuz.cc:433
 }
 
 // NewV3Ai 创建 V3 AI 客户端。
