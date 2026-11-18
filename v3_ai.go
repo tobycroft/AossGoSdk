@@ -15,7 +15,7 @@ import (
 // X-Aoss-Ts / X-Aoss-Kid / X-Aoss-Auth，不使用 V1/V2 的 ?token= 明文方式。
 // 虽然服务端兼容表单/查询串传参，本客户端只用新版请求头方式。
 //
-// 结构化字段（messages/tools/input/thinking/image 等）按服务端约定以
+// 结构化字段（messages/tools/input/thinking 等）按服务端约定以
 // JSON 字符串提交；响应统一为 {code,data,echo}，code=0 时 data 为上游原样响应。
 
 // V3Ai V3 AI 客户端。零值可直接用，BaseUrl 为空时回退 SDK 公用地址 conf.go:baseUrl。
@@ -142,23 +142,6 @@ func (self *V3Ai) Messages(messages any, options map[string]any) (any, error) {
 		}
 	}
 	return self.call("/v3/ai/messages/index", post)
-}
-
-// ImageGenerations 图片生成 POST /v3/ai/images/generations。
-// options 支持 model/ratio/return_base64/response_format/image/extra_body。
-func (self *V3Ai) ImageGenerations(prompt, size string, options map[string]any) (any, error) {
-	post := map[string]any{"prompt": prompt, "size": size}
-	copyOptions(post, options, "model", "ratio", "return_base64", "response_format")
-	for _, k := range []string{"image", "extra_body"} {
-		if v, ok := options[k]; ok {
-			s, err := jsonString(v)
-			if err != nil {
-				return nil, err
-			}
-			post[k] = s
-		}
-	}
-	return self.call("/v3/ai/images/generations", post)
 }
 
 // copyOptions 透传简单标量字段，仅复制 options 中实际存在的键。
