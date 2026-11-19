@@ -2,8 +2,6 @@ package AossGoSdk
 
 import (
 	"errors"
-	"strconv"
-	"time"
 
 	"github.com/bytedance/sonic"
 	Net "github.com/tobycroft/TuuzNet"
@@ -42,14 +40,9 @@ type v3Ret struct {
 	Echo string `json:"echo"`
 }
 
-// v3Headers 生成一次请求的 V3 鉴权请求头（每次动态生成时间戳与随机 IV）。
+// v3Headers 生成一次请求的 V3 鉴权请求头，复用公共 V3AuthHeaders。
 func (self *V3Ai) v3Headers() map[string]string {
-	ts := time.Now().Unix()
-	return map[string]string{
-		"X-Aoss-Ts":   strconv.FormatInt(ts, 10),
-		"X-Aoss-Kid":  V3Kid(self.Secret),
-		"X-Aoss-Auth": V3Seal(self.Secret, ts),
-	}
+	return V3AuthHeaders(self.Secret)
 }
 
 // call 发起一次 V3 表单请求，返回上游 data（code!=0 时返回 error）。

@@ -9,6 +9,8 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"io"
+	"strconv"
+	"time"
 )
 
 // V3 开放接口凭证信封（AES-256-GCM）
@@ -94,6 +96,19 @@ func V3Seal(secret string, ts int64) string {
 	raw = append(raw, iv...)
 	raw = append(raw, sealed...)
 	return v3EnvelopeVersion + "." + base64.RawURLEncoding.EncodeToString(raw)
+}
+
+// V3AuthHeaders 生成一次请求的 V3 鉴权请求头（每次动态生成时间戳与随机 IV）。
+//
+// 服务端约定：X-Aoss-Ts / X-Aoss-Kid / X-Aoss-Auth，
+// 服务端虽兼容表单/查询串传参，本 SDK 一律用请求头方式。
+func V3AuthHeaders(secret string) map[string]string {
+	ts := time.Now().Unix()
+	return map[string]string{
+		"X-Aoss-Ts":   strconv.FormatInt(ts, 10),
+		"X-Aoss-Kid":  V3Kid(secret),
+		"X-Aoss-Auth": V3Seal(secret, ts),
+	}
 }
 
 // decimal 将非负 int64 转为十进制字符串（避免额外依赖）。
