@@ -1,7 +1,12 @@
 package AossGoSdk
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
+	"io"
+	"os"
+	"strings"
 
 	"github.com/bytedance/sonic"
 	Net "github.com/tobycroft/TuuzNet"
@@ -13,7 +18,9 @@ import (
 //   - GetUploadToken           换取一次性上传 token
 //   - GetUploadUrl             换取一次性 token + 完整上传地址
 //   - GetUploadHashUrl         换取 hash 模式上传地址（上传后仅返回 md5）
-//   - GetUploadedFileUrlByHash 按 md5 查询文件完整信息
+//   - CheckMd5                  秒传前置：按 md5 查系统内是否已有文件（跨项目）
+//   - PrepareUpload/PrepareUploadByMd5 命中直接返回 path，未命中返回标准上传地址
+//   - GetUploadedFileUrlByHash 按 md5 查询文件完整信息（当前 Bucket 分组）
 //   - Delete / Restore          软删（移入 upload/recycle/YYYYMMDD/）与恢复
 //
 // 鉴权改为 V3 凭证信封（见 v3_envelope.go）：请求头 X-Aoss-Ts / X-Aoss-Kid / X-Aoss-Auth，
@@ -85,6 +92,105 @@ func v3BucketPost(bucket string) map[string]any {
 		post["bucket"] = bucket
 	}
 	return post
+}
+
+// V3Md5CheckData 秒传前置查询结果。Exists=true 时 Path/Url/Surl 为系统内既有文件。
+type V3Md5CheckData struct {
+	Exists bool         `json:"exists"`
+	Path   string       `json:"path"`
+	Url    string       `json:"url"`
+	Surl   string       `json:"surl"`
+	Md5    string       `json:"md5"`
+	File   FileHashData `json:"file"`
+}
+
+// CheckMd5 秒传前置：按 md5 查系统内是否已有文件 POST /v3/file/token/md5_check。
+// 未命中返回 Exists=false 且无 error，调用方据此决定是否继续上传。
+func (self *V3File) CheckMd5(md5 string) (V3Md5CheckData, error) {
+	md5 = strings.ToLower(strings.TrimSpace(md5))
+	if md5 == "" {
+		return V3Md5CheckData{}, errors.New("需要md5字段")
+	}
+	data, err := self.callToken("/v3/file/token/md5_check", map[string]any{"md5": md5})
+	if err != nil {
+		return V3Md5CheckData{}, err
+	}
+	var out V3Md5CheckData
+	if err := decodeData(data, &out); err != nil {
+		return V3Md5CheckData{}, err
+	}
+	return out, nil
+}
+
+// V3UploadPlan 上传准备结果：Hit=true 秒传命中，直接用 Path/Url；否则用 UploadUrl 提交文件。
+type V3UploadPlan struct {
+	Hit       bool
+	Md5       string
+	Path      string
+	Url       string
+	Surl      string
+	Token     string
+	ExpiredAt string
+	UploadUrl string
+}
+
+// NeedUpload 未命中且已拿到上传地址时，调用方需要真正提交文件。
+func (p V3UploadPlan) NeedUpload() bool {
+	return !p.Hit && p.UploadUrl != ""
+}
+
+// PrepareUploadByMd5 已算好 md5 时的上传准备：命中秒传，未命中自动申请上传 token。
+func (self *V3File) PrepareUploadByMd5(md5, ip, bucket string) (V3UploadPlan, error) {
+	md5 = strings.ToLower(strings.TrimSpace(md5))
+	if md5 == "" {
+		return V3UploadPlan{}, errors.New("需要md5字段")
+	}
+	check, err := self.CheckMd5(md5)
+	if err != nil {
+		return V3UploadPlan{}, err
+	}
+	if check.Exists {
+		return V3UploadPlan{
+			Hit:  true,
+			Md5:  md5,
+			Path: check.Path,
+			Url:  check.Url,
+			Surl: check.Surl,
+		}, nil
+	}
+	url, err := self.getUploadUrlWithIp(ip, bucket)
+	if err != nil {
+		return V3UploadPlan{}, err
+	}
+	return V3UploadPlan{
+		Md5:       md5,
+		Token:     url.Token,
+		ExpiredAt: url.ExpiredAt,
+		UploadUrl: url.UploadUrl,
+	}, nil
+}
+
+// PrepareUpload 本地文件上传准备：先算 md5 再查系统，命中秒传，未命中返回标准上传地址。
+func (self *V3File) PrepareUpload(filePath, ip, bucket string) (V3UploadPlan, error) {
+	md5, err := md5LocalFile(filePath)
+	if err != nil {
+		return V3UploadPlan{}, err
+	}
+	return self.PrepareUploadByMd5(md5, ip, bucket)
+}
+
+// md5LocalFile 以流式方式计算本地文件 md5，避免大文件一次性读入内存。
+func md5LocalFile(filePath string) (string, error) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
 // GetUploadToken 换取一次性上传 token POST /v3/file/token/create。
