@@ -17,8 +17,9 @@ import (
 //   - Delete / Restore          软删（移入 upload/recycle/YYYYMMDD/）与恢复
 //
 // 鉴权改为 V3 凭证信封（见 v3_envelope.go）：请求头 X-Aoss-Ts / X-Aoss-Kid / X-Aoss-Auth，
-// Secret 永不明文传输。项目须在 AOSSTP8 后台「项目管理 v3」绑定一个 ao_oss 存储项目
-// （oss_token），否则签发接口返回未配置。
+// Secret 永不明文传输。存储由后台「存储管理 V3 → 存储项目」授权的 Bucket 决定：
+//   - 不指定 bucket：使用该项目设定的默认 Bucket（兼容旧版调用）；
+//   - 指定 bucket：必须是该项目已授权的 Bucket（按 Bucket 名称），否则签发接口返回 403。
 //
 // 前端直传阶段沿用一次性 token（upload_url），与 V2 行为一致——直传请求无法携带
 // 自定义鉴权头，也不能把 secret 交给前端；信封鉴权发生在签发 token 的环节。
@@ -77,9 +78,28 @@ func decodeData(data any, out any) error {
 	return sonic.Unmarshal(raw, out)
 }
 
+// v3BucketPost 不传 bucket 时不带该字段，服务端自动回退默认 Bucket。
+func v3BucketPost(bucket string) map[string]any {
+	post := map[string]any{}
+	if bucket != "" {
+		post["bucket"] = bucket
+	}
+	return post
+}
+
 // GetUploadToken 换取一次性上传 token POST /v3/file/token/create。
+// 不指定 bucket，走服务端默认 Bucket；需指定时用 GetUploadTokenWithBucket。
 func (self *V3File) GetUploadToken() (FileData, error) {
-	data, err := self.callToken("/v3/file/token/create", map[string]any{})
+	return self.getUploadToken("")
+}
+
+// GetUploadTokenWithBucket 指定目标 Bucket（必须是该项目已授权的 Bucket 名称）。
+func (self *V3File) GetUploadTokenWithBucket(bucket string) (FileData, error) {
+	return self.getUploadToken(bucket)
+}
+
+func (self *V3File) getUploadToken(bucket string) (FileData, error) {
+	data, err := self.callToken("/v3/file/token/create", v3BucketPost(bucket))
 	if err != nil {
 		return FileData{}, err
 	}
@@ -91,18 +111,28 @@ func (self *V3File) GetUploadToken() (FileData, error) {
 }
 
 // GetUploadUrl 换取一次性 token + 完整上传地址 POST /v3/file/token/upload_url。
-// 可选 ip：以 map 形式写入 post（通过 SetIp 风格的直接参数）。
+// 不指定 bucket，走服务端默认 Bucket。
 func (self *V3File) GetUploadUrl() (FileUrlData, error) {
-	return self.getUploadUrlWithIp("")
+	return self.getUploadUrlWithIp("", "")
 }
 
 // GetUploadUrlWithIp 同 GetUploadUrl，额外携带上传来源 IP（写 ao_attachment_token.ip）。
 func (self *V3File) GetUploadUrlWithIp(ip string) (FileUrlData, error) {
-	return self.getUploadUrlWithIp(ip)
+	return self.getUploadUrlWithIp(ip, "")
 }
 
-func (self *V3File) getUploadUrlWithIp(ip string) (FileUrlData, error) {
-	post := map[string]any{}
+// GetUploadUrlWithBucket 指定目标 Bucket，不带来源 IP。
+func (self *V3File) GetUploadUrlWithBucket(bucket string) (FileUrlData, error) {
+	return self.getUploadUrlWithIp("", bucket)
+}
+
+// GetUploadUrlWithIpAndBucket 同时指定目标 Bucket 与上传来源 IP。
+func (self *V3File) GetUploadUrlWithIpAndBucket(ip, bucket string) (FileUrlData, error) {
+	return self.getUploadUrlWithIp(ip, bucket)
+}
+
+func (self *V3File) getUploadUrlWithIp(ip, bucket string) (FileUrlData, error) {
+	post := v3BucketPost(bucket)
 	if ip != "" {
 		post["ip"] = ip
 	}
@@ -118,8 +148,18 @@ func (self *V3File) getUploadUrlWithIp(ip string) (FileUrlData, error) {
 }
 
 // GetUploadHashUrl 换取 hash 模式上传地址 POST /v3/file/token/upload_url_hash。
+// 不指定 bucket，走服务端默认 Bucket。
 func (self *V3File) GetUploadHashUrl() (FileUrlData, error) {
-	data, err := self.callToken("/v3/file/token/upload_url_hash", map[string]any{})
+	return self.getUploadHashUrl("")
+}
+
+// GetUploadHashUrlWithBucket 指定目标 Bucket 的 hash 模式上传地址。
+func (self *V3File) GetUploadHashUrlWithBucket(bucket string) (FileUrlData, error) {
+	return self.getUploadHashUrl(bucket)
+}
+
+func (self *V3File) getUploadHashUrl(bucket string) (FileUrlData, error) {
+	data, err := self.callToken("/v3/file/token/upload_url_hash", v3BucketPost(bucket))
 	if err != nil {
 		return FileUrlData{}, err
 	}
