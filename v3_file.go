@@ -14,6 +14,7 @@ import (
 //   - GetUploadUrl             换取一次性 token + 完整上传地址
 //   - GetUploadHashUrl         换取 hash 模式上传地址（上传后仅返回 md5）
 //   - GetUploadedFileUrlByHash 按 md5 查询文件完整信息
+//   - Delete / Restore          软删（移入 upload/recycle/YYYYMMDD/）与恢复
 //
 // 鉴权改为 V3 凭证信封（见 v3_envelope.go）：请求头 X-Aoss-Ts / X-Aoss-Kid / X-Aoss-Auth，
 // Secret 永不明文传输。项目须在 AOSSTP8 后台「项目管理 v3」绑定一个 ao_oss 存储项目
@@ -125,6 +126,39 @@ func (self *V3File) GetUploadHashUrl() (FileUrlData, error) {
 	var out FileUrlData
 	if err := decodeData(data, &out); err != nil {
 		return FileUrlData{}, err
+	}
+	return out, nil
+}
+
+// V3FileActionData 删除/恢复接口返回的数据。
+type V3FileActionData struct {
+	MD5      string   `json:"md5"`
+	Deleted  int      `json:"deleted"`
+	Warnings []string `json:"warnings"`
+}
+
+// Delete 软删文件，服务端将文件移入 upload/recycle/YYYYMMDD/。
+func (self *V3File) Delete(hash string) (V3FileActionData, error) {
+	data, err := self.callToken("/v3/file/token/delete", map[string]any{"hash": hash})
+	if err != nil {
+		return V3FileActionData{}, err
+	}
+	var out V3FileActionData
+	if err := decodeData(data, &out); err != nil {
+		return V3FileActionData{}, err
+	}
+	return out, nil
+}
+
+// Restore 从回收站恢复文件到原路径。
+func (self *V3File) Restore(hash string) (V3FileActionData, error) {
+	data, err := self.callToken("/v3/file/token/restore", map[string]any{"hash": hash})
+	if err != nil {
+		return V3FileActionData{}, err
+	}
+	var out V3FileActionData
+	if err := decodeData(data, &out); err != nil {
+		return V3FileActionData{}, err
 	}
 	return out, nil
 }
