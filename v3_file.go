@@ -21,7 +21,11 @@ import (
 //   - CheckMd5                  秒传前置：按 md5 查系统内是否已有文件（跨项目）
 //   - PrepareUpload/PrepareUploadByMd5 命中直接返回 path，未命中返回标准上传地址
 //   - GetUploadedFileUrlByHash 按 md5 查询文件完整信息（当前 Bucket 分组）
+//   - GetTempUrl               按 md5/hash 签发客户端指定 ttl 的临时地址（v1.31.0+）
 //   - Delete / Restore          软删（移入 upload/recycle/YYYYMMDD/）与恢复
+//
+// 地址口径：Url / FileUrl 均为 /attachment 或 /file 虚拟地址，不暴露真实落盘路径；
+// hash 查询默认给 attachment 永久地址，带 ttl 或调 GetTempUrl 时 FileUrl 为 file 临时地址。
 //
 // 鉴权改为 V3 凭证信封（见 v3_envelope.go）：请求头 X-Aoss-Ts / X-Aoss-Kid / X-Aoss-Auth，
 // Secret 永不明文传输。存储由后台「存储管理 V3 → 存储项目」授权的 Bucket 决定：
@@ -310,14 +314,49 @@ func (self *V3File) Restore(hash string) (V3FileActionData, error) {
 }
 
 // GetUploadedFileUrlByHash 按 md5/hash 查询文件完整信息 POST /v3/file/token/hash_query。
-func (self *V3File) GetUploadedFileUrlByHash(hash string) (FileHashData, error) {
-	data, err := self.callToken("/v3/file/token/hash_query", map[string]any{"hash": hash})
+// ttl>0 时服务端把 FileUrl 改签为有效期 ttl 秒的 file 临时地址，ttl=0 时为 attachment 永久地址。
+func (self *V3File) GetUploadedFileUrlByHash(hash string, ttl ...int) (FileHashData, error) {
+	post := map[string]any{"hash": hash}
+	if len(ttl) > 0 && ttl[0] > 0 {
+		post["ttl"] = ttl[0]
+	}
+	data, err := self.callToken("/v3/file/token/hash_query", post)
 	if err != nil {
 		return FileHashData{}, err
 	}
 	var out FileHashData
 	if err := decodeData(data, &out); err != nil {
 		return FileHashData{}, err
+	}
+	return out, nil
+}
+
+// V3TempUrlData 临时地址签发结果 POST /v3/file/token/temp_url（AOSSTP8 v2.8.0+）。
+// Url 与 FileUrl 同值；ExpiresIn 为有效期秒数，ExpiredAt 为服务端到期时间戳。
+type V3TempUrlData struct {
+	ID        int64  `json:"id"`
+	MD5       string `json:"md5"`
+	Url       string `json:"url"`
+	FileUrl   string `json:"file_url"`
+	ExpiresIn int64  `json:"expires_in"`
+	ExpiredAt int64  `json:"expired_at"`
+}
+
+// GetTempUrl 按 md5/hash 签发临时地址 POST /v3/file/token/temp_url。
+// ttl 为有效期秒数（1~服务端 max_ttl，默认上限 604800）；<=0 时不带该字段，用服务端默认值。
+// 远程 Bucket 不支持临时分发，服务端返回 error。
+func (self *V3File) GetTempUrl(hash string, ttl int) (V3TempUrlData, error) {
+	post := map[string]any{"hash": hash}
+	if ttl > 0 {
+		post["ttl"] = ttl
+	}
+	data, err := self.callToken("/v3/file/token/temp_url", post)
+	if err != nil {
+		return V3TempUrlData{}, err
+	}
+	var out V3TempUrlData
+	if err := decodeData(data, &out); err != nil {
+		return V3TempUrlData{}, err
 	}
 	return out, nil
 }

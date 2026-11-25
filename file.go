@@ -129,6 +129,9 @@ type FileHashData struct {
 	Duration    float64 `json:"duration"`
 	DurationStr string  `json:"duration_str"`
 	Bitrate     float64 `json:"bitrate"`
+	// V3 分发地址：默认与 Url 同为 attachment 永久地址；带 ttl 查询时为 file 临时地址
+	FileUrl       string `json:"file_url"`
+	FileExpiredAt int64  `json:"file_expired_at"`
 }
 
 type fileHashRet struct {
