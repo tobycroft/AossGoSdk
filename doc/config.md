@@ -63,10 +63,15 @@ func main() {
 // 初始化阶段调用即可，对全部客户端（V1/V2/V3）生效
 AossGoSdk.Aoss_conf_set_sni("upload.tuuz.cc", "10.0.0.8")
 
-// 批量设置
+// 内网端口与外网端口不一致时，额外指定实际连接端口
+// URL 仍为 upload.tuuz.cc:433，实际连接到 10.0.0.8:8443
+AossGoSdk.Aoss_conf_set_sni("upload.tuuz.cc", "10.0.0.8", 8443)
+
+// 批量设置（值支持 "IP" 或 "IP:端口"）
 AossGoSdk.Aoss_conf_set_sni_map(map[string]string{
     "upload.tuuz.cc":   "10.0.0.8",
     "aoss.example.com": "127.0.0.1",
+    "port.example.com": "10.0.0.9:8443",
 })
 
 // 移除单个域名（IP 传空串）
@@ -78,6 +83,6 @@ AossGoSdk.Aoss_conf_clear_sni()
 
 | 函数 | 说明 |
 |------|------|
-| `Aoss_conf_set_sni(domain, ip string)` | 为域名设置连接 IP，`ip` 为空时移除该域名 |
-| `Aoss_conf_set_sni_map(m map[string]string)` | 批量设置域名到 IP 的映射 |
+| `Aoss_conf_set_sni(domain, ip string, port ...int)` | 为域名设置连接 IP，可选指定实际连接端口；`ip` 为空时移除该域名 |
+| `Aoss_conf_set_sni_map(m map[string]string)` | 批量设置，值支持 `IP` 或 `IP:端口` |
 | `Aoss_conf_clear_sni()` | 清除全部配置，恢复默认 DNS 解析 |

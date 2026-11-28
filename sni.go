@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -29,10 +30,21 @@ import (
 //	AossGoSdk.Aoss_conf_set_sni("upload.tuuz.cc", "10.0.0.8")
 //	// 域名仍为 upload.tuuz.cc，实际连接到 10.0.0.8:433
 //
+//	// 内网端口与外网端口不一致时，可额外指定连接端口
+//	AossGoSdk.Aoss_conf_set_sni("upload.tuuz.cc", "10.0.0.8", 8443)
+//	// 域名仍为 upload.tuuz.cc:433，实际连接到 10.0.0.8:8443
+//
 // 传空 IP 可移除该域名的配置：AossGoSdk.Aoss_conf_set_sni("upload.tuuz.cc", "")
+//
+// aossSniTarget 保存域名的连接目标；port 为空表示沿用 URL 中的端口。
+type aossSniTarget struct {
+	ip   string
+	port string
+}
+
 var (
 	aossSniMu sync.RWMutex
-	aossSni   = map[string]string{}
+	aossSni   = map[string]aossSniTarget{}
 
 	aossDialer = &net.Dialer{
 		Timeout:   10 * time.Second,
@@ -51,17 +63,18 @@ var (
 
 // Aoss_conf_set_sni 为指定域名配置连接 IP（可传内网 IP 或 127.0.0.1）。
 // domain 可带 scheme/端口，SDK 只取主机名；ip 传空串表示移除该域名的配置。
-func Aoss_conf_set_sni(domain, ip string) {
+// port 为可选的实际连接端口：内网端口与外网不一样时传入，留空沿用 URL 中的端口。
+func Aoss_conf_set_sni(domain, ip string, port ...int) {
 	domain = aossNormalizeDomain(domain)
-	ip = aossNormalizeIP(ip)
 	if domain == "" {
 		return
 	}
+	target := aossParseTarget(ip, port...)
 	aossSniMu.Lock()
-	if ip == "" {
+	if target.ip == "" {
 		delete(aossSni, domain)
 	} else {
-		aossSni[domain] = ip
+		aossSni[domain] = target
 	}
 	aossSniMu.Unlock()
 	// 让已缓存的旧连接失效，下一次请求立即使用新的目标地址。
@@ -71,8 +84,9 @@ func Aoss_conf_set_sni(domain, ip string) {
 // Aoss_conf_set_sni_map 批量设置域名到 IP 的映射，例如：
 //
 //	AossGoSdk.Aoss_conf_set_sni_map(map[string]string{
-//	    "upload.tuuz.cc":  "10.0.0.8",
+//	    "upload.tuuz.cc":   "10.0.0.8",
 //	    "aoss.example.com": "127.0.0.1",
+//	    "port.example.com": "10.0.0.9:8443", // 值支持 IP:端口
 //	})
 func Aoss_conf_set_sni_map(m map[string]string) {
 	for domain, ip := range m {
@@ -83,21 +97,36 @@ func Aoss_conf_set_sni_map(m map[string]string) {
 // Aoss_conf_clear_sni 清除全部 SNI 配置，恢复默认 DNS 解析。
 func Aoss_conf_clear_sni() {
 	aossSniMu.Lock()
-	aossSni = map[string]string{}
+	aossSni = map[string]aossSniTarget{}
 	aossSniMu.Unlock()
 	aossTransport.CloseIdleConnections()
 }
 
-// aossSniLookup 查询域名对应的连接 IP。
-func aossSniLookup(host string) (string, bool) {
+// aossSniLookup 查询域名对应的连接目标。
+func aossSniLookup(host string) (aossSniTarget, bool) {
 	host = aossNormalizeDomain(host)
 	if host == "" {
-		return "", false
+		return aossSniTarget{}, false
 	}
 	aossSniMu.RLock()
-	ip, ok := aossSni[host]
+	target, ok := aossSni[host]
 	aossSniMu.RUnlock()
-	return ip, ok
+	return target, ok
+}
+
+// aossParseTarget 解析连接目标：优先使用显式 port，其次识别 "ip:port" 写法。
+func aossParseTarget(ip string, port ...int) aossSniTarget {
+	ip = strings.TrimSpace(ip)
+	target := aossSniTarget{}
+	if len(port) > 0 && port[0] > 0 {
+		target.port = strconv.Itoa(port[0])
+	} else if h, p, err := net.SplitHostPort(ip); err == nil {
+		// 兼容 "10.0.0.8:8443" 与 "[::1]:8443"，裸 IPv6 会因多冒号解析失败而走下面的 IP 分支。
+		ip = h
+		target.port = p
+	}
+	target.ip = aossNormalizeIP(ip)
+	return target
 }
 
 // aossNormalizeDomain 提取并规范化主机名：去 scheme/端口、去尾点、转小写。
@@ -130,8 +159,11 @@ func aossNormalizeIP(s string) string {
 func aossDialContext(ctx context.Context, network, addr string) (net.Conn, error) {
 	host, port, err := net.SplitHostPort(addr)
 	if err == nil {
-		if ip, ok := aossSniLookup(host); ok && ip != "" {
-			addr = net.JoinHostPort(ip, port)
+		if target, ok := aossSniLookup(host); ok && target.ip != "" {
+			if target.port != "" {
+				port = target.port
+			}
+			addr = net.JoinHostPort(target.ip, port)
 		}
 	}
 	return aossDialer.DialContext(ctx, network, addr)
