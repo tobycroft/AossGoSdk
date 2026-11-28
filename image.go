@@ -5,7 +5,6 @@ import (
 
 	"github.com/bytedance/sonic"
 	"github.com/tobycroft/Calc"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 const Canvas_Posistion_TopLeft = "lt"
@@ -64,14 +63,14 @@ func (self *Canvas) Get_Url(project interface{}, width int64, height int64, back
 	if err != nil {
 		return "", err
 	}
-	post := map[string]string{
+	post := map[string]any{
 		"width":      Calc.Any2String(width),
 		"height":     Calc.Any2String(height),
 		"background": background_color,
 		"data":       data,
 	}
 	var wwuf wechatStringData
-	err2 := new(Net.Post).PostFormData(baseUrl+canvas_file, map[string]interface{}{"token": project}, post, nil, nil).RetJson(&wwuf)
+	err2 := aossPostFormAny(baseUrl+canvas_file, map[string]interface{}{"token": project}, post, nil, nil).RetJson(&wwuf)
 	if err2 != nil {
 		return "", err2
 	}

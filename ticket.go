@@ -3,8 +3,6 @@ package AossGoSdk
 import (
 	"errors"
 	"time"
-
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 // Wechat_ticket_signature:微信ticket签名功能
@@ -14,7 +12,7 @@ func Wechat_ticket_signature(project, noncestr string, timestamp time.Time, url 
 		"timestamp": timestamp.Unix(),
 		"url":       url,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+ticket_signature, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+ticket_signature, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std

@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"image"
-
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type Captcha struct {
@@ -19,7 +17,7 @@ func (self *Captcha) Check(ident, code any) error {
 		"code":  code,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -41,7 +39,7 @@ func (self *Captcha) CheckInTime(ident, code any, validtime_in_second int) error
 		"second": validtime_in_second,
 		"token":  self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/auth/check_in_time", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/auth/check_in_time", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -62,7 +60,7 @@ func (self *Captcha) CheckWithCode(ident, code any) (int64, error) {
 		"code":  code,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/auth/check", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -80,7 +78,7 @@ func (self *Captcha) Math(ident any) (img image.Image, err error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/math", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/text/math", nil, param, nil, nil)
 	var ret []byte
 	ret, err = rets.RetBytes()
 	if err != nil {
@@ -108,7 +106,7 @@ func (self *Captcha) Number(ident any) (img image.Image, err error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/number", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/text/number", nil, param, nil, nil)
 	var ret []byte
 	ret, err = rets.RetBytes()
 	if err != nil {
@@ -137,7 +135,7 @@ func (self *Captcha) Chinese(ident any) (img image.Image, err error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/chinese", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/text/chinese", nil, param, nil, nil)
 	var ret []byte
 	ret, err = rets.RetBytes()
 	if err != nil {
@@ -166,7 +164,7 @@ func (self *Captcha) Text(ident any) (img image.Image, err error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/text/text", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/text/text", nil, param, nil, nil)
 	var ret []byte
 	ret, err = rets.RetBytes()
 	if err != nil {
@@ -219,7 +217,7 @@ func (self *Captcha) getGif(path string, ident any) ([]byte, error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+path, nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+path, nil, param, nil, nil)
 	ret, err := rets.RetBytes()
 	if err != nil {
 		return nil, err
@@ -259,7 +257,7 @@ func (self *Captcha) Slide(ident any) (data SlideCaptchaData, err error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/slide/create", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/slide/create", nil, param, nil, nil)
 	var rs slideRet
 	err = rets.RetJson(&rs)
 	if err != nil {
@@ -280,7 +278,7 @@ func (self *Captcha) SlideCheck(ident any, x int) error {
 		"x":     x,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/slide/check", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/slide/check", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -300,7 +298,7 @@ func (self *Captcha) SlideCheckWithCode(ident any, x int) (int64, error) {
 		"x":     x,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/slide/check", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/slide/check", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -333,7 +331,7 @@ func (self *Captcha) Click(ident any) (data ClickCaptchaData, err error) {
 		"ident": ident,
 		"token": self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/click/create", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/click/create", nil, param, nil, nil)
 	var rs clickRet
 	err = rets.RetJson(&rs)
 	if err != nil {
@@ -355,7 +353,7 @@ func (self *Captcha) ClickCheck(ident any, clicks string) error {
 		"clicks": clicks,
 		"token":  self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/captcha/click/check", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/captcha/click/check", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {

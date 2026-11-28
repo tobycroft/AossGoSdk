@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/tobycroft/Calc"
-	Net "github.com/tobycroft/TuuzNet"
 
 	"time"
 )
@@ -33,7 +32,7 @@ func (self PalWorld) ShowPlayers() (users []OnlineUser, err error) {
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/players", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/rcon/palworld/players", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -63,7 +62,7 @@ func (self PalWorld) Kick(id any) error {
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/kick", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/rcon/palworld/kick", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -87,7 +86,7 @@ func (self PalWorld) Ban(id any) error {
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/ban", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/rcon/palworld/ban", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	var rs ret_std
@@ -109,7 +108,7 @@ func (self PalWorld) Ping() error {
 		"name": self.Name,
 		"sign": Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/rcon/palworld/ping", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/rcon/palworld/ping", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	var rs ret_std

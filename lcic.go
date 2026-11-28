@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/tobycroft/Calc"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type Lcic struct {
@@ -28,7 +27,7 @@ type LcicStructCreateUser struct {
 // Lcic_CreateUser Name:用户在直播间的显示名称 | OriginId:用户在你系统中的标识符 | Avatar:用户头像url地址
 func (self *Lcic) Lcic_CreateUser(Name, OriginId, Avatar string) (user LcicStructCreateUser, err error) {
 	ts := Calc.Any2String(time.Now().Unix())
-	param := map[string]string{
+	param := map[string]any{
 		"Name":     Name,
 		"OriginId": OriginId,
 		"Avatar":   Avatar,
@@ -36,7 +35,7 @@ func (self *Lcic) Lcic_CreateUser(Name, OriginId, Avatar string) (user LcicStruc
 		"name":     self.Name,
 		"sign":     Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormData(baseUrls+"/v1/lcic/user/auto", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/lcic/user/auto", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	var resp ret_std
@@ -78,7 +77,7 @@ func (self *Lcic) Lcic_RoomCreate(TeacherId, StartTime, EndTime, Name any) (room
 		"name":      self.Name,
 		"sign":      Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/lcic/room/create", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/lcic/room/create", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -112,7 +111,7 @@ func (self *Lcic) Lcic_RoomModify(RoomId, TeacherId, StartTime, EndTime, Name an
 		"name":      self.Name,
 		"sign":      Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/lcic/room/create", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/lcic/room/create", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -137,7 +136,7 @@ func (self *Lcic) Lcic_RoomDelete(RoomId interface{}) (b bool, err error) {
 		"name":   self.Name,
 		"sign":   Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/lcic/room/delete", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/lcic/room/delete", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -175,7 +174,7 @@ func (self *Lcic) Lcic_LinkUrl(OriginId, TeacherId interface{}) (url LcicStructL
 		"name":      self.Name,
 		"sign":      Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/lcic/room/delete", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/lcic/room/delete", map[string]interface{}{
 		"token": self.Name,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)

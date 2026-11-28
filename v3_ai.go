@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/bytedance/sonic"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 // V3 开放接口（AOSSTP8 /v3/ai/*）Go 客户端
@@ -51,7 +50,7 @@ func (self *V3Ai) call(path string, post map[string]any) (any, error) {
 	if base == "" {
 		base = baseUrl
 	}
-	rets := new(Net.Post).PostFormDataAny(base+path, nil, post, self.v3Headers(), nil)
+	rets := aossPostFormAny(base+path, nil, post, self.v3Headers(), nil)
 	var resp v3Ret
 	if err := rets.RetJson(&resp); err != nil {
 		return nil, err

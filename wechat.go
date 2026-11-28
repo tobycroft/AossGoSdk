@@ -2,8 +2,6 @@ package AossGoSdk
 
 import (
 	"errors"
-
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type ret_std struct {
@@ -23,7 +21,7 @@ func Wechat_wxa_unlimited_file(project, data, page string) (str string, err erro
 		"data": data,
 		"page": page,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+unlimited_file, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+unlimited_file, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -49,7 +47,7 @@ func Wechat_wxa_unlimited_raw(project, data, page string) (b []byte, err error) 
 		"data": data,
 		"page": page,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+unlimited_base64, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+unlimited_base64, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -86,7 +84,7 @@ func Wechat_wxa_scene(project, scene string) (sen WechatWxaScene, err error) {
 	post := map[string]any{
 		"scene": scene,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+wxa_scene, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+wxa_scene, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -118,7 +116,7 @@ func Wechat_sns_jscode2session(project, js_code string) (session WechatSnsJscode
 	post := map[string]any{
 		"js_code": js_code,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+jscode, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+jscode, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -154,7 +152,7 @@ func Wechat_wxa_getuserphonenumber(project, code string) (num WechatWxaGEtUserPh
 	post := map[string]any{
 		"code": code,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+getuserphonenumber, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+getuserphonenumber, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -190,7 +188,7 @@ func Wechat_wxa_generatescheme(project, path, query string, is_expire bool, expi
 		"is_expire":       is_expire,
 		"expire_interval": expire_interval,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+generatescheme, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+generatescheme, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std

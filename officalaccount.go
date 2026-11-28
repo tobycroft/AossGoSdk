@@ -4,12 +4,11 @@ import (
 	"errors"
 
 	"github.com/bytedance/sonic"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 // Wechat_get_accessToken:获取AccessToken，不推荐，建议使用0.0.0.0/0设定公众号
 //func Wechat_get_accessToken(project string) error {
-//	rets := new(Net.Post).PostFormDataAny(baseUrl+get_accesstoken, map[string]interface{}{
+//	rets := aossPostFormAny(baseUrl+get_accesstoken, map[string]interface{}{
 //		"token": project,
 //	}, nil, nil, nil)
 //	if err != nil {
@@ -27,11 +26,11 @@ import (
 //			return errors.New(ret)
 //		}
 //		postData := dat.Data["postdata"].(map[string]interface{})
-//		ret, err = new(Net.Post).PostFormDataAny(dat.Data["address"].(string), nil, postData, nil, nil)
+//		ret, err = aossPostFormAny(dat.Data["address"].(string), nil, postData, nil, nil)
 //		if err != nil {
 //			return err
 //		}
-//		ret, err = new(Net.Post).PostFormDataAny(baseUrl+set_accesstoken, map[string]interface{}{
+//		ret, err = aossPostFormAny(baseUrl+set_accesstoken, map[string]interface{}{
 //			"token": project,
 //		}, map[string]interface{}{
 //			"data": ret,
@@ -64,7 +63,7 @@ type wechatDataMapStringInterface struct {
 
 // Wechat_offi_get_user_list:获取已关注用户的openid列表，slices仅限openid无法区别谁是谁
 func Wechat_offi_get_user_list(project string) (str []string, err error) {
-	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_user_list, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+offi_user_list, map[string]interface{}{
 		"token": project,
 	}, nil, nil, nil)
 	var resp ret_std
@@ -102,7 +101,7 @@ func Wechat_offi_get_user_info(project, openid string) (info WechatUserInfo, err
 	post := map[string]any{
 		"openid": openid,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_user_list, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+offi_user_list, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -131,7 +130,7 @@ func Wechat_offi_openidUrl(project, redirect_uri, response_type, scope, state st
 		"state":         state,
 		"png":           show_in_qrcode,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_openid_url, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+offi_openid_url, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -156,7 +155,7 @@ func Wechat_offi_openid_from_code(project, code any) (str string, err error) {
 	post := map[string]any{
 		"code": code,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_openid_aquire_from_code, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+offi_openid_aquire_from_code, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -190,7 +189,7 @@ func Wechat_template_send(project, openid, template_id, url interface{}, data ma
 		"url":         url,
 		"data":        dat,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+offi_template_send, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+offi_template_send, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std
@@ -216,7 +215,7 @@ func Wechat_snsAuth(project, access_token, openid interface{}) (str string, err 
 		"openid":       openid,
 		"access_token": access_token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+sns_auth, map[string]interface{}{
+	rets := aossPostFormAny(baseUrl+sns_auth, map[string]interface{}{
 		"token": project,
 	}, post, nil, nil)
 	var resp ret_std

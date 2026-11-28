@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/bytedance/sonic"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 // V3 开放接口（AOSSTP8 /v3/mail/send/*）Go 客户端
@@ -52,7 +51,7 @@ func (self *V3Mail) v3BaseUrl() string {
 
 // call 发起一次 V3 表单请求，返回上游 data（code!=0 时返回 error）。
 func (self *V3Mail) call(path string, post map[string]any) (any, error) {
-	rets := new(Net.Post).PostFormDataAny(self.v3BaseUrl()+path, nil, post, V3AuthHeaders(self.Secret), nil)
+	rets := aossPostFormAny(self.v3BaseUrl()+path, nil, post, V3AuthHeaders(self.Secret), nil)
 	var resp v3MailRet
 	if err := rets.RetJson(&resp); err != nil {
 		return nil, err

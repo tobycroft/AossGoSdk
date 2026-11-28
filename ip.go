@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/bytedance/sonic"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type IP struct {
@@ -23,7 +22,7 @@ func (self *IP) IpRange(country any, province []any, ip any) (b bool, err error)
 		"ip":       ip,
 		"token":    self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/ip/range/check", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/ip/range/check", nil, param, nil, nil)
 	//fmt.Println(ret, err)
 	var rs ret_std
 	err = rets.RetJson(&rs)
@@ -50,7 +49,7 @@ func (self *IP) IpRangeAuth(country any, province []any, ip any) (bool, error) {
 		"ip":       ip,
 		"token":    self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/ip/range/auth", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/ip/range/auth", nil, param, nil, nil)
 	//fmt.Println(ret, err)
 	var rs ret_std
 	err = rets.RetJson(&rs)
@@ -76,7 +75,7 @@ func (self *IP) IpRangeCaptcha(country any, province []any, ip any) (int64, erro
 		"ip":       ip,
 		"token":    self.Token,
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/ip/range/auth", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/ip/range/auth", nil, param, nil, nil)
 	//fmt.Println(ret, err)
 	var rs ret_std
 	err = rets.RetJson(&rs)

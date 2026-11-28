@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/tobycroft/Calc"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type File struct {
@@ -61,7 +60,7 @@ func (self *File) GetUploadToken() (FileData, error) {
 		remoteUrl = self.RemoteUrl
 	}
 
-	rets := new(Net.Post).PostFormDataAny(remoteUrl+"/v2/file/token/create", nil, param, nil, nil)
+	rets := aossPostFormAny(remoteUrl+"/v2/file/token/create", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -96,7 +95,7 @@ func (self *File) GetUploadUrl() (FileUrlData, error) {
 		remoteUrl = self.RemoteUrl
 	}
 
-	rets := new(Net.Post).PostFormDataAny(remoteUrl+"/v2/file/token/upload_url", nil, param, nil, nil)
+	rets := aossPostFormAny(remoteUrl+"/v2/file/token/upload_url", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -158,7 +157,7 @@ func (self *File) GetUploadHashUrl() (FileUrlData, error) {
 		remoteUrl = self.RemoteUrl
 	}
 
-	rets := new(Net.Post).PostFormDataAny(remoteUrl+"/v2/file/token/upload_url_hash", nil, param, nil, nil)
+	rets := aossPostFormAny(remoteUrl+"/v2/file/token/upload_url_hash", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {
@@ -191,7 +190,7 @@ func (self *File) GetUploadedFileUrlByHash(hash string) (FileHashData, error) {
 		remoteUrl = self.RemoteUrl
 	}
 
-	rets := new(Net.Post).PostFormDataAny(remoteUrl+"/v2/file/token/hash_query", nil, param, nil, nil)
+	rets := aossPostFormAny(remoteUrl+"/v2/file/token/hash_query", nil, param, nil, nil)
 	var rs ret_std
 	err := rets.RetJson(&rs)
 	if err != nil {

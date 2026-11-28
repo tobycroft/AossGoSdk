@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/tobycroft/Calc"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type ASMS struct {
@@ -24,7 +23,7 @@ func (self *ASMS) Sms_send(phone any, quhao, text, ip any) (err error) {
 		"name":  self.Name,
 		"sign":  Calc.Md5(self.Token + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrl+"/v1/sms/single/push", nil, param, nil, nil)
+	rets := aossPostFormAny(baseUrl+"/v1/sms/single/push", nil, param, nil, nil)
 	var rs ret_std
 	err = rets.RetJson(&rs)
 	if rs.Code == 0 {

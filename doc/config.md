@@ -50,3 +50,34 @@ func main() {
     )
 }
 ```
+
+## SNI 域名直连（内网 IP）
+
+内网环境访问 AOSSTP8 时，域名解析可能仍指向公网。通过 SNI 配置可以保持域名不变，只把 TCP 连接指向内网 IP：
+
+- 请求 URL、Host 头、TLS SNI 与证书校验仍使用原域名；
+- 只有实际连接地址被替换为配置的 IP，不会放宽证书校验；
+- 域名可带 scheme/端口，SDK 只取主机名。
+
+```go
+// 初始化阶段调用即可，对全部客户端（V1/V2/V3）生效
+AossGoSdk.Aoss_conf_set_sni("upload.tuuz.cc", "10.0.0.8")
+
+// 批量设置
+AossGoSdk.Aoss_conf_set_sni_map(map[string]string{
+    "upload.tuuz.cc":   "10.0.0.8",
+    "aoss.example.com": "127.0.0.1",
+})
+
+// 移除单个域名（IP 传空串）
+AossGoSdk.Aoss_conf_set_sni("upload.tuuz.cc", "")
+
+// 清除全部 SNI 配置
+AossGoSdk.Aoss_conf_clear_sni()
+```
+
+| 函数 | 说明 |
+|------|------|
+| `Aoss_conf_set_sni(domain, ip string)` | 为域名设置连接 IP，`ip` 为空时移除该域名 |
+| `Aoss_conf_set_sni_map(m map[string]string)` | 批量设置域名到 IP 的映射 |
+| `Aoss_conf_clear_sni()` | 清除全部配置，恢复默认 DNS 解析 |

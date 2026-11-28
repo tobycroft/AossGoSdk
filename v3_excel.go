@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/bytedance/sonic"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 // V3 开放接口（AOSSTP8 /v3/excel/*）Go 客户端
@@ -59,7 +58,7 @@ func (self *V3Excel) v3BaseUrl() string {
 
 // callForm 发起一次 V3 表单请求，返回上游 data（code!=0 时返回 error）。
 func (self *V3Excel) callForm(path string, post map[string]any) (any, error) {
-	rets := new(Net.Post).PostFormDataAny(self.v3BaseUrl()+path, nil, post, V3AuthHeaders(self.Secret), nil)
+	rets := aossPostFormAny(self.v3BaseUrl()+path, nil, post, V3AuthHeaders(self.Secret), nil)
 	var resp v3ExcelRet
 	if err := rets.RetJson(&resp); err != nil {
 		return nil, err
@@ -86,7 +85,7 @@ func (self *V3Excel) SendExcel(realPath, mimeType, fileName string) (any, error)
 	}
 	req.Header.Set("Content-Type", contentType)
 
-	cli := &http.Client{Timeout: 120 * time.Second}
+	cli := aossHTTPClient(120 * time.Second)
 	resp, err := cli.Do(req)
 	if err != nil {
 		return nil, err
@@ -118,7 +117,7 @@ func (self *V3Excel) CreateExcelDownloadDirectly(data any) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	rets := new(Net.Post).PostFormDataAny(self.v3BaseUrl()+"/v3/excel/index/create", nil,
+	rets := aossPostFormAny(self.v3BaseUrl()+"/v3/excel/index/create", nil,
 		map[string]any{"data": payload}, V3AuthHeaders(self.Secret), nil)
 	raw, err := rets.RetBytes()
 	if err != nil {

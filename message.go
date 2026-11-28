@@ -2,8 +2,6 @@ package AossGoSdk
 
 import (
 	"errors"
-
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type Wechat_message struct {
@@ -48,7 +46,7 @@ func (self *Wechat_message) Send() (err error) {
 		url = baseUrls + message_send_text
 		break
 	}
-	rets := new(Net.Post).PostFormDataAny(url, get, post, nil, nil)
+	rets := aossPostFormAny(url, get, post, nil, nil)
 	var resp ret_std
 	err = rets.RetJson(&resp)
 	if err != nil {

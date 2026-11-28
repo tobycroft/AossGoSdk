@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/tobycroft/Calc"
-	Net "github.com/tobycroft/TuuzNet"
 )
 
 type Live struct {
@@ -41,7 +40,7 @@ func (self *Live) CreateAll(title any) (all LiveStructCreateAll, err error) {
 		"ts":    ts,
 		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/live/room/create_all", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/live/room/create_all", map[string]interface{}{
 		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -88,7 +87,7 @@ func (self *Live) CreateRoom(title any) (room LiveStructCreateRoom, err error) {
 		"ts":    ts,
 		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/live/room/create", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/live/room/create", map[string]interface{}{
 		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
@@ -130,7 +129,7 @@ func (self *Live) GetPlayUrl(title any) (url LiveStructPlayUrl, err error) {
 		"ts":    ts,
 		"sign":  Calc.Md5(self.Code + Calc.Any2String(ts)),
 	}
-	rets := new(Net.Post).PostFormDataAny(baseUrls+"/v1/live/room/play_url", map[string]interface{}{
+	rets := aossPostFormAny(baseUrls+"/v1/live/room/play_url", map[string]interface{}{
 		"token": self.Token,
 	}, param, nil, nil)
 	//fmt.Println(ret, err)
